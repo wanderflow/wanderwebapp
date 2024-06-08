@@ -21,7 +21,7 @@ const RootRedirect = () => {
   const { user, isSignedIn, isLoaded } = useUser();
 
   useEffect(() => {
-    console.log(user, isSignedIn, isLoaded);
+    console.log(user, isSignedIn);
   }, [user, isSignedIn, isLoaded]);
 
   if (!isLoaded) {
@@ -33,14 +33,16 @@ const RootRedirect = () => {
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
+  const { user } = useUser();
   const navigate = useNavigate();
-  const { isSignedIn, user } = useAuth();
+  const { isSignedIn} = useAuth();
+  console.log(user, isSignedIn);
 
   useEffect(() => {
     async function processCallback() {
       try {
-        await handleRedirectCallback();
-        if (isSignedIn && user.needsSetup) {
+        // await handleRedirectCallback();
+        if (isSignedIn) {
           navigate('/collect-name');
         } else {
           navigate('/');
@@ -65,10 +67,8 @@ export default function App() {
             <Route path="/invite" element={<InvitePage />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/confirm" element={<ConfirmEmailPage />} />
-
             <Route path="/oauth-callback" element={<OAuthCallback />} />
             <Route path="/collect-name" element={<CollectNamePage />} />
-
             <Route path="/download" element={<DownloadPage />} />
           </Routes>
         </Router>

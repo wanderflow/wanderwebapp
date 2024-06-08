@@ -1,29 +1,31 @@
 import { useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
-import axios from "axios";
-
+import { useUser } from "@clerk/clerk-react";
 import WanderBg from "@/components/WanderBg";
 
 const CollectNamePage = () => {
   const [name, setName] = useState("");
-  const { user, session } = useAuth();
-
+  const { user, isLoaded } = useUser();
   const handleNameSubmit = async () => {
-    try {
-      // 使用 Clerk API 更新用户信息
-      await axios.patch(`https://api.clerk.dev/v1/users/${user.id}`, {
-        username: name,
-      }, {
-        headers: {
-          Authorization: `Bearer ${user.primarySessionId}`
-        }
-      });
-
-      // 将用户重定向到主页面
-      window.location.href = '/';
-    } catch (error) {
-      console.error('Error updating user information:', error);
+    if (!isLoaded) {
+      console.error("User data is not loaded yet.");
+      return;
     }
+    if (!user) {
+      console.error("User object is not available.");
+      return;
+    }
+
+    if (!name) {
+      console.error("Username cannot be empty.");
+      return;
+    }
+    console.log(user, name);
+    await user
+      .update({ username: name })
+      .then((res) => console.log(res))
+      .catch((error) => console.log("An error occurred:", error.errors));
+
+    window.location.href = "/";
   };
 
   return (
@@ -42,7 +44,9 @@ const CollectNamePage = () => {
               />
             </div>
             <div className="fixed bottom-1/4 -mb-24 max-w-md xl:max-w-xl w-full px-12">
-              <button className="mt-24" onClick={handleNameSubmit}>Sign up</button>
+              <button className="mt-24" onClick={handleNameSubmit}>
+                Sign up
+              </button>
             </div>
           </div>
         </div>

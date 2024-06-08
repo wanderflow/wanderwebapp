@@ -50,7 +50,7 @@ const SignUp = () => {
       });
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      navigate("/confirm");
+      navigate(`/confirm?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.log("Error:", err);
       if (err.errors && err.errors[0]) {
