@@ -2,7 +2,7 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate,useNavigate 
+  useNavigate,
 } from "react-router-dom";
 
 import { IconContext } from "react-icons";
@@ -13,29 +13,30 @@ import {
   InviteToGuessPage,
   DownloadPage,
   CollectNamePage,
+  Home,
 } from "./pages";
-import { useUser, useClerk,useAuth } from "@clerk/clerk-react";
+import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 
-const RootRedirect = () => {
-  const { user, isSignedIn, isLoaded } = useUser();
+// const RootRedirect = () => {
+//   const { user, isSignedIn, isLoaded } = useUser();
 
-  useEffect(() => {
-    console.log(user, isSignedIn);
-  }, [user, isSignedIn, isLoaded]);
+//   useEffect(() => {
+//     console.log(user, isSignedIn);
+//   }, [user, isSignedIn, isLoaded]);
 
-  if (!isLoaded) {
-    return <div>Loading...</div>; // or a loading spinner
-  }
+//   if (!isLoaded) {
+//     return <div>Loading...</div>; // or a loading spinner
+//   }
 
-  return isSignedIn ? <Navigate to="/download" /> : <Navigate to="/invite" />;
-};
+//   return isSignedIn ? <Navigate to="/download" /> : <Navigate to="/invite" />;
+// };
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();
-  const { isSignedIn} = useAuth();
+  const { isSignedIn } = useAuth();
   console.log(user, isSignedIn);
 
   useEffect(() => {
@@ -43,12 +44,12 @@ function OAuthCallback() {
       try {
         // await handleRedirectCallback();
         if (isSignedIn) {
-          navigate('/collect-name');
+          navigate("/collect-name");
         } else {
-          navigate('/download');
+          navigate("/download");
         }
       } catch (error) {
-        console.error('Error during OAuth callback:', error);
+        console.error("Error during OAuth callback:", error);
       }
     }
 
@@ -62,7 +63,7 @@ export default function App() {
       <IconContext.Provider value={{ color: "#8391A1", size: 24 }}>
         <Router>
           <Routes>
-            <Route path="/" element={<RootRedirect />} />
+            <Route path="/" element={<Home />} />
             <Route path="/inviteToGuess" element={<InviteToGuessPage />} />
             <Route path="/invite" element={<InvitePage />} />
             <Route path="/signup" element={<SignUp />} />

@@ -25,7 +25,7 @@ const CollectNamePage = () => {
       .then((res) => console.log(res))
       .catch((error) => console.log("An error occurred:", error.errors));
 
-    window.location.href = "/";
+    window.location.href = "/download";
   };
 
   return (

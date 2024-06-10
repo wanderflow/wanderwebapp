@@ -21,7 +21,7 @@ const ConfirmEmailPage = () => {
         code,
       });
       await setActive({ session: completeSignUp.createdSessionId });
-      navigate("/");
+      navigate("/download");
     } catch (err) {
       console.log("Error:", err);
       if (err.errors && err.errors[0]) {
