@@ -12,13 +12,16 @@ const SignInWithOAuth = ({ provider }) => {
       await signUp.authenticateWithRedirect({
         strategy: `oauth_${provider}`,
         redirectUrl: `${window.location.origin}/oauth-callback`,
-        afterSignInUrl: `${window.location.origin}/collect-name`,
+        // afterSignInUrl: `${window.location.origin}/collect-name`,
+        // redirectUrlComplete: `${window.location.origin}/download`
       });
     } catch (error) {
       console.error("OAuth flow failed", error);
       console.error("Error details:", error.response?.data || error.message);
     }
   };
+
+
   return (
     <Button
       type={provider === "apple" ? "apple" : "google"}

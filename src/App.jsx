@@ -45,7 +45,7 @@ function OAuthCallback() {
         if (isSignedIn) {
           navigate('/collect-name');
         } else {
-          navigate('/');
+          navigate('/download');
         }
       } catch (error) {
         console.error('Error during OAuth callback:', error);
