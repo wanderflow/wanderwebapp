@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import WanderBg from "@/components/WanderBg";
+import { createInviteUserRelation } from "@/api";
 
 const schema = yup.object().shape({
   username: yup.string().required("Username is required"),
@@ -43,13 +44,18 @@ const SignUp = () => {
         return;
       }
     try {
-      await signUp.create({
+      const user = await signUp.create({
         username,
         emailAddress: email,
         password,
       });
-
+      const data = await createInviteUserRelation({
+        invite_user_id: localStorage.getItem("userId"),
+        accept_user_id: user.id,
+      });
+      console.log("Invite user relation created:", data);
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      
       navigate(`/confirm?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.log("Error:", err);

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import WanderBg from "@/components/WanderBg";
+import { createInviteUserRelation } from "@/api";
 
 const CollectNamePage = () => {
   const [name, setName] = useState("");
   const { user, isLoaded } = useUser();
+
   const handleNameSubmit = async () => {
+
     if (!isLoaded) {
       console.error("User data is not loaded yet.");
       return;
@@ -14,17 +17,28 @@ const CollectNamePage = () => {
       console.error("User object is not available.");
       return;
     }
-
     if (!name) {
       console.error("Username cannot be empty.");
       return;
     }
-    await user
-      .update({ username: name })
-      .then((res) => console.log(res))
-      .catch((error) => console.log("An error occurred:", error.errors));
 
-    window.location.href = "/#/download";
+    try {
+      await user.update({ username: name });
+      const data = await createInviteUserRelation({
+        invite_user_id: localStorage.getItem("userId"),
+        accept_user_id: user.id,
+      });
+      console.log("Invite user relation created:", data);
+      window.location.href = "/#/download";
+    } catch (err) {
+      console.log("Error:", err);
+      if (err.errors && err.errors[0]) {
+        console.log("Error Message:", err.errors[0].message);
+        alert(err.errors[0].message);
+      } else {
+        alert("An unknown error occurred.");
+      }
+    }
   };
 
   return (

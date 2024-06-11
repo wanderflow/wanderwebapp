@@ -5,10 +5,11 @@ import { useUser } from "@clerk/clerk-react";
 const InvitePage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // const userId = queryParams.get("userId");
+  const userId = queryParams.get("userId");
   const username = queryParams.get("username");
   const { user, isSignedIn } = useUser();
-
+  localStorage.setItem("userId", userId);
+  
   if (isSignedIn) {
     return <Navigate to="/download" />;
   }

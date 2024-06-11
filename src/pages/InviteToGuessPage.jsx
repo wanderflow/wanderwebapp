@@ -18,6 +18,8 @@ const InviteToGuessPage = () => {
   const express_pk = queryParams.get("expressPk");
   const userId = queryParams.get("userId");
   const username = queryParams.get("username");
+  const express = queryParams.get("express");
+  localStorage.setItem("userId", userId);
 
   const handleOnClick = (index) => {
     setSelected(true);
@@ -63,7 +65,7 @@ const InviteToGuessPage = () => {
   return (
     <main className="container">
       <div className="mt-20 flex flex-col gap-10 items-center">
-        <h1 className="">{`It'd be nice to meet someone to…?`}</h1>
+        <h1 className="">{express}</h1>
 
         {selected ? (
           <div className="flex flex-col items-center">
