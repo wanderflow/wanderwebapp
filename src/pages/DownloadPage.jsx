@@ -1,6 +1,12 @@
 import Button from "@/components/Button";
 import { downloadImage, wanderLargeImage, wanderSmallImage } from "@/utils";
+import { useUser } from "@clerk/clerk-react";
+
 const DownloadPage = () => {
+  const { user } = useUser();
+  if (user) {
+    console.log(user);
+  }
   return (
     <main className="container">
       <div

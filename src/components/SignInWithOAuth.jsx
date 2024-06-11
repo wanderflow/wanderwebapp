@@ -11,7 +11,7 @@ const SignInWithOAuth = ({ provider }) => {
     try {
       await signUp.authenticateWithRedirect({
         strategy: `oauth_${provider}`,
-        redirectUrl: `${window.location.origin}/oauth-callback`,
+        redirectUrl: `${window.location.origin}/#/oauth-callback`,
         // afterSignInUrl: `${window.location.origin}/collect-name`,
         // redirectUrlComplete: `${window.location.origin}/download`
       });
@@ -20,7 +20,6 @@ const SignInWithOAuth = ({ provider }) => {
       console.error("Error details:", error.response?.data || error.message);
     }
   };
-
 
   return (
     <Button

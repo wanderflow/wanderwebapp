@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import AnswerCard from "../components/AnswerCard";
 import SignIn from "@/components/SignIn";
 import { getInviteAnswers } from "@/api";
+import { useSession } from "@clerk/clerk-react";
 
 const InviteToGuessPage = () => {
   const [selected, setSelected] = useState(false);
@@ -42,6 +43,12 @@ const InviteToGuessPage = () => {
       getInvitationInfo();
     }
   });
+
+  const { isSignedIn } = useSession();
+  
+  if(isSignedIn) {
+    return <Navigate to="/download" />
+  }
 
   if (loading) {
     return (

@@ -18,26 +18,11 @@ import {
 import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 
-// const RootRedirect = () => {
-//   const { user, isSignedIn, isLoaded } = useUser();
-
-//   useEffect(() => {
-//     console.log(user, isSignedIn);
-//   }, [user, isSignedIn, isLoaded]);
-
-//   if (!isLoaded) {
-//     return <div>Loading...</div>; // or a loading spinner
-//   }
-
-//   return isSignedIn ? <Navigate to="/download" /> : <Navigate to="/invite" />;
-// };
-
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();
   const { isSignedIn } = useAuth();
-  console.log(user, isSignedIn);
 
   useEffect(() => {
     async function processCallback() {
@@ -57,6 +42,26 @@ function OAuthCallback() {
   }, [handleRedirectCallback, isSignedIn, user, navigate]);
 }
 
+const SignOut = () => {
+  const clerk = useClerk();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function performSignOut() {
+      try {
+        await clerk.signOut();
+        navigate("/");
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
+    }
+
+    performSignOut();
+  }, [clerk, navigate]);
+
+  return <div>Signing you out...</div>;
+};
+
 export default function App() {
   return (
     <div className="min-h-screen w-full">
@@ -71,6 +76,7 @@ export default function App() {
             <Route path="/oauth-callback" element={<OAuthCallback />} />
             <Route path="/collect-name" element={<CollectNamePage />} />
             <Route path="/download" element={<DownloadPage />} />
+            <Route path="/signout" element={<SignOut />} />
           </Routes>
         </Router>
       </IconContext.Provider>

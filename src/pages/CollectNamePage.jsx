@@ -19,13 +19,12 @@ const CollectNamePage = () => {
       console.error("Username cannot be empty.");
       return;
     }
-    console.log(user, name);
     await user
       .update({ username: name })
       .then((res) => console.log(res))
       .catch((error) => console.log("An error occurred:", error.errors));
 
-    window.location.href = "/download";
+    window.location.href = "/#/download";
   };
 
   return (
