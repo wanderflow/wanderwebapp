@@ -70,5 +70,8 @@
     max-width: 400px; 
   }
   
+  .home-p {
+    @apply font-light text-sm md:font-semibold md:text-base
+  }
   
 }

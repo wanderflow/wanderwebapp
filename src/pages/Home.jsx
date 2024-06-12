@@ -38,7 +38,7 @@ const Home = () => {
         isChanged ? `bg-[#ffffff] text-black` : "bg-[#152227] text-white"
       }`}
     >
-      <header className="text-center mb-6 mt-12">
+      <header className="text-center mb-6 mt-12 md:mt-6">
         <div className="flex justify-center items-center mb-4">
           <img
             src={isChanged ? AI2Image : AIImage}
@@ -46,14 +46,14 @@ const Home = () => {
             className="h-20"
           />
           <h1
-            className={`text-4xl font-bold ml-4 ${
+            className={`text-4xl font-bold ml-4 transition-all duration-3000 ${
               isChanged ? `text-black` : `text-white`
             }`}
           >
             Wander
           </h1>
         </div>
-        <div className="relative w-full max-w-sm mx-auto">
+        <div className="relative w-full max-w-xs mx-auto md:max-w-sm">
           <img
             src={isChanged ? landing2Image : landingImage}
             alt="landing"
@@ -64,9 +64,9 @@ const Home = () => {
           <img
             src={isChanged ? eyeImage : eyeImage2}
             alt="eyes"
-            className="h-10 mr-4"
+            className="h-10 md:mr-4"
           />
-          <p className="text-xl font-medium mt-3 mb-6">
+          <p className="text-lg max-w-72 md:max-w-full md:text-xl font-medium mt-3 mb-6">
             {`${
               isChanged
                 ? `try “Media Social”: discover your world, connect serendipitously`
@@ -77,7 +77,7 @@ const Home = () => {
       </header>
       <div className="text-center flex flex-col justify-center items-center">
         <button
-          className={`join-waitlist-button w-60 h-24 rounded-full py-4 px-8 mb-3 shadow-lg transition-all duration-300 ${
+          className={`join-waitlist-button w-60 h-20 md:h-24 rounded-full py-4 px-8 mb-3 shadow-lg transition-all duration-3000 ${
             isChanged
               ? " bg-button-gradient text-black"
               : "bg-gradient-to-r from-gray-400 to-[#152227]"
@@ -90,45 +90,45 @@ const Home = () => {
           For support issues, please email{" "}
           <a
             href="mailto:help.wander.one@gmail.com"
-            className={`text-purple-500 underline ${
+            className={`text-purple-500 underline transition-all duration-3000 ${
               isChanged ? `text-black` : `text-white`
             }`}
           >
             help.wander.one@gmail.com
           </a>
         </p>
-        <section className="h-screen mt-10 text-center mx-auto  flex flex-col justify-center items-center">
+        <section className="h-screen mt-24 md:mt-10 text-center mx-3 md:mx-auto flex flex-col justify-center items-center">
           <h2
-            className={`text-2xl font-bold mb-16 ${
+            className={`text-2xl font-bold mb-9 md:mb-16 transition-all duration-3000 ${
               isChanged ? ` text-black` : " text-white"
             }`}
           >
             After talking to hundreds of Gen Zs, we discovered a paradox:
           </h2>
-          <p className="mb-4">{`They should've been the happiest generation, with higher living standards and endless entertainment at their fingertips.`}</p>
-          <p className="mb-4">
+          <p className="mb-4 home-p">{`They should've been the happiest generation, with higher living standards and endless entertainment at their fingertips.`}</p>
+          <p className="mb-4 home-p">
             Yet the loneliness epidemic seems real, genuine social connections
             are alarmingly absent.
           </p>
-          <p className="mb-4">{`Diving deeper, we found that on social media, Gen Z feels they're performing rather than communicating.`}</p>
-          <p className="mb-4">
+          <p className="mb-4 home-p">{`Diving deeper, we found that on social media, Gen Z feels they're performing rather than communicating.`}</p>
+          <p className="mb-4 home-p">
             And to meet someone new, they have dating apps, where connections
             seem just a swipe away.
           </p>
-          <p className="mb-4">
+          <p className="mb-4 home-p">
             Yet, hundreds of chats later, the search for meaningful interaction
             continues.
           </p>
-          <p className="mb-4">
+          <p className="mb-4 home-p">
             Today, social media is more about addictive media consumption than
             about fostering real social interactions.
           </p>
-          <p className="mb-4">
+          <p className="mb-4 home-p">
             In response, we created <strong>Wander</strong> to bridge this gap,
             fostering authentic connections.
           </p>
-          <p className="mb-4">
-            Give Wander Social a try! We are early stage, and would really
+          <p className="mb-4 home-p">
+            Give <span className="font-semibold md:text-lg">Wander Social</span> a try! We are early stage, and would really
             appreciate any thoughts and feedback!
           </p>
           <a
@@ -138,7 +138,7 @@ const Home = () => {
             <img
               src={isChanged ? download2Image : download1Image}
               alt="Download on the App Store"
-              className="w-64 mx-auto"
+              className="w-64 mx-auto mb-3"
             />
           </a>
         </section>

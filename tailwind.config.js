@@ -7,6 +7,10 @@ export default {
         sans: ["Lato", "sans-serif"],
         magra: ["Magra", "sans-serif"],
       },
+      transitionDuration: {
+        '3000': '3000ms',
+        '10000': '10000ms',
+      },
       backgroundImage: {
         "custom-gradient": "linear-gradient(270deg, #5897FF 0%, #B19FFF 100%)",
         "button-gradient":
