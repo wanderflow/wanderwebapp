@@ -1,36 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="refresh" content="0; URL='/'" />
-  <title>Redirecting...</title>
-  <script>
-    
-    // 获取当前URL的查询参数
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // 获取pathname参数的值
-    const pathname = urlParams.get('pathname');
-    console.log(urlParams, pathname)
+  <head>
+    <meta http-equiv="refresh" content="0; URL='/'" />
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const pathname = urlParams.get("pathname");
+      let redirectTo = "/";
 
-    // 定义要重定向的路径
-    let redirectTo = '/';
-
-    // 如果pathname存在并且有效，则设置重定向路径
-    if (pathname) {
-      switch (pathname) {
-        case 'invite':
-          redirectTo = '/#/invite';
-          break;
-        // 可以在这里添加更多的重定向逻辑
-        default:
-          redirectTo = '/';
+      if (pathname) {
+        switch (pathname) {
+          case "invite":
+            redirectTo = "/#/invite";
+            break;
+          case "inviteToGuess":
+            redirectTo = "/#/inviteToGuess";
+            break;
+          default:
+            redirectTo = "/";
+        }
       }
-    }
 
-    window.location.href = redirectTo;
-    
-  </script>
-</head>
-<body>
-</body>
+      window.location.href = redirectTo;
+    </script>
+  </head>
+  <body></body>
 </html>

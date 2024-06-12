@@ -10,7 +10,7 @@ const InviteToGuessPage = () => {
   const [result, setResult] = useState(null);
   const [index, setIndex] = useState(2);
   const [invitationAnswers, setInvitationAnswers] = useState([]);
-
+  const [express, setExpress] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
@@ -18,7 +18,6 @@ const InviteToGuessPage = () => {
   const express_pk = queryParams.get("expressPk");
   const userId = queryParams.get("userId");
   const username = queryParams.get("username");
-  const express = queryParams.get("express");
   localStorage.setItem("userId", userId);
 
   const handleOnClick = (index) => {
@@ -34,6 +33,7 @@ const InviteToGuessPage = () => {
     setLoading(true);
     const data = await getInviteAnswers({ user: userId, express_pk });
     setInvitationAnswers(data.map((d) => d.answer_text));
+    setExpress(data[3].express_question)
     const targetItem = data.find((d) => d.distance === 0);
     const index = data.indexOf(targetItem);
     setIndex(index);
@@ -80,7 +80,7 @@ const InviteToGuessPage = () => {
         ) : (
           <>
             <div className="flex flex-col gap-4 w-full">
-              {invitationAnswers.map((answer, index) => (
+              {invitationAnswers.slice(0, 3).map((answer, index) => (
                 <AnswerCard
                   key={index}
                   text={answer}
