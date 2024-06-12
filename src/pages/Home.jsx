@@ -38,7 +38,7 @@ const Home = () => {
         isChanged ? `bg-[#ffffff] text-black` : "bg-[#152227] text-white"
       }`}
     >
-      <header className="text-center mb-6 mt-12 md:mt-6">
+      <header className="text-center mb-6 mt-0 md:mt-6">
         <div className="flex justify-center items-center mb-4">
           <img
             src={isChanged ? AI2Image : AIImage}
