@@ -33,7 +33,7 @@ const InviteToGuessPage = () => {
     setLoading(true);
     const data = await getInviteAnswers({ user: userId, express_pk });
     setInvitationAnswers(data.map((d) => d.answer_text));
-    setExpress(data[3].express_question)
+    setExpress(data[3].express_question);
     const targetItem = data.find((d) => d.distance === 0);
     const index = data.indexOf(targetItem);
     setIndex(index);
@@ -47,9 +47,9 @@ const InviteToGuessPage = () => {
   });
 
   const { isSignedIn } = useSession();
-  
-  if(isSignedIn) {
-    return <Navigate to="/download" />
+
+  if (isSignedIn) {
+    return <Navigate to="/download" />;
   }
 
   if (loading) {
@@ -74,7 +74,7 @@ const InviteToGuessPage = () => {
               {result ? `🎉 Correct! 🎉 ` : ` 🤣 Oops! 🤣`}
             </h2>
             <h2 className="">
-              {result ? `join XXX to go deep!` : `Sign up to reveal!`}
+              {result ? `join ${username} to go deep!` : `Sign up to reveal!`}
             </h2>
           </div>
         ) : (
