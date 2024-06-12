@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; URL='/'" />
     <script>
       const urlParams = new URLSearchParams(window.location.search);
-      const pathname = urlParams.get("pathname");
+      const currentPath = window.location.pathname;
       let redirectTo = "/";
 
-      if (pathname) {
-        switch (pathname) {
-          case "invite":
+      if (currentPath) {
+        switch (currentPath) {
+          case "/invite":
             redirectTo = "/#/invite";
             break;
-          case "inviteToGuess":
+          case "/inviteToGuess":
             redirectTo = "/#/inviteToGuess";
             break;
           default:
@@ -20,7 +19,15 @@
         }
       }
 
-      window.location.href = redirectTo;
+      const queryString = urlParams.toString();
+      if (queryString) {
+        redirectTo += "?" + queryString;
+      }
+
+      if (window.location.href !== window.location.origin + redirectTo) {
+        console.log(`Redirecting to: ${redirectTo}`);
+        window.location.href = redirectTo;
+      }
     </script>
   </head>
   <body></body>
