@@ -1,0 +1,27 @@
+[
+    {
+      "question": "What is the capital of France?",
+      "data": "Paris is the capital and most populous city of France.",
+      "isCreatedByAI": true,
+      "NumberOfAnswers": 1
+    },
+    {
+      "question": "What are the primary colors?",
+      "data": "The primary colors are red, blue, and yellow.",
+      "isCreatedByAI": false,
+      "NumberOfAnswers": 3
+    },
+    {
+      "question": "Who wrote 'To Kill a Mockingbird'?",
+      "data": "Harper Lee is the author of 'To Kill a Mockingbird'.",
+      "isCreatedByAI": true,
+      "NumberOfAnswers": 1
+    },
+    {
+      "question": "What is the speed of light?",
+      "data": "The speed of light in a vacuum is approximately 299,792 kilometers per second (km/s).",
+      "isCreatedByAI": true,
+      "NumberOfAnswers": 1
+    }
+  ]
+  

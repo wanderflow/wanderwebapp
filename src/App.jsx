@@ -4,15 +4,18 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
-
+import React, { useState } from "react";
 import { IconContext } from "react-icons";
 import {
   SignUp,
   ConfirmEmailPage,
   InvitePage,
   InviteToGuessPage,
+  InternalToolsPage,
+  QuestionEdit,
   DownloadPage,
   CollectNamePage,
+  Login,
   Home,
 } from "./pages";
 import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
@@ -62,7 +65,10 @@ const SignOut = () => {
   return <div>Signing you out...</div>;
 };
 
+// internal tools login authentication
+
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <div className="min-h-screen w-full">
       <IconContext.Provider value={{ color: "#8391A1", size: 24 }}>
@@ -71,7 +77,10 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/inviteToGuess" element={<InviteToGuessPage />} />
             <Route path="/invite" element={<InvitePage />} />
+            <Route path="/internal" element={<InternalToolsPage />} />
+            <Route path="/edit" element={<QuestionEdit />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/confirm" element={<ConfirmEmailPage />} />
             <Route path="/oauth-callback" element={<OAuthCallback />} />
             <Route path="/collect-name" element={<CollectNamePage />} />
