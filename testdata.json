@@ -1,27 +1,42 @@
 [
-    {
-      "question": "What is the capital of France?",
-      "data": "Paris is the capital and most populous city of France.",
-      "isCreatedByAI": true,
-      "NumberOfAnswers": 1
-    },
-    {
-      "question": "What are the primary colors?",
-      "data": "The primary colors are red, blue, and yellow.",
-      "isCreatedByAI": false,
-      "NumberOfAnswers": 3
-    },
-    {
-      "question": "Who wrote 'To Kill a Mockingbird'?",
-      "data": "Harper Lee is the author of 'To Kill a Mockingbird'.",
-      "isCreatedByAI": true,
-      "NumberOfAnswers": 1
-    },
-    {
-      "question": "What is the speed of light?",
-      "data": "The speed of light in a vacuum is approximately 299,792 kilometers per second (km/s).",
-      "isCreatedByAI": true,
-      "NumberOfAnswers": 1
-    }
-  ]
-  
+  {
+    "id": 1,
+    "question": "What is the capital of France?",
+    "dateCreated": "2023-07-02",
+    "tags": ["Geography", "University A"],
+    "NumberOfAnswers": 5,
+    "isCreatedByAI": true
+  },
+  {
+    "id": 2,
+    "question": "Explain the theory of relativity.",
+    "dateCreated": "2023-07-02",
+    "tags": ["Physics", "University B"],
+    "NumberOfAnswers": 3,
+    "isCreatedByAI": false
+  },
+  {
+    "id": 3,
+    "question": "What is photosynthesis?",
+    "dateCreated": "2023-07-03",
+    "tags": ["Biology", "University A"],
+    "NumberOfAnswers": 7,
+    "isCreatedByAI": true
+  },
+  {
+    "id": 4,
+    "question": "What are the main principles of calculus?",
+    "dateCreated": "2023-07-01",
+    "tags": ["Mathematics", "University C"],
+    "NumberOfAnswers": 4,
+    "isCreatedByAI": false
+  },
+  {
+    "id": 5,
+    "question": "Describe the process of mitosis.",
+    "dateCreated": "2023-07-05",
+    "tags": ["Biology", "University B"],
+    "NumberOfAnswers": 6,
+    "isCreatedByAI": true
+  }
+]
