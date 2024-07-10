@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import moment from "moment";
+import "moment/locale/en-gb";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -126,7 +128,6 @@ const App = () => {
           : answer
       );
       setAnswers(updatedAnswers);
-      setFilteredAnswers(updatedQuestions);
     }
     setEditingItem({ type: "", id: null, text: "" });
   };
@@ -202,7 +203,9 @@ const App = () => {
               <React.Fragment key={index}>
                 <tr>
                   <td rowSpan={question.answers.length}>
-                    {question.created_at}
+                    {moment
+                      .unix(question.created_at)
+                      .format("MMMM Do YYYY, h:mm:ss a")}
                   </td>
                   <td rowSpan={question.answers.length}>
                     {editingItem.type === "question" &&
@@ -260,7 +263,11 @@ const App = () => {
                   </td>
                   {question.answers.length > 0 ? (
                     <>
-                      <td>{question.answers[0].created_at}</td>
+                      <td>
+                        {moment
+                          .unix(question.answers[0].created_at)
+                          .format("MMMM Do YYYY, h:mm:ss a")}
+                      </td>
                       <td>{question.answers[0].expression_answer}</td>
                       <td>{question.answers[0].creator}</td>
                       <td>
@@ -281,16 +288,16 @@ const App = () => {
                     </>
                   ) : (
                     <>
-                      <td rowSpan={1} class="default">
+                      <td rowSpan={1} className="default">
                         [N/A]
                       </td>
-                      <td rowSpan={1} class="default">
+                      <td rowSpan={1} className="default">
                         [No answer]
                       </td>
-                      <td rowSpan={1} class="default">
+                      <td rowSpan={1} className="default">
                         [N/A]
                       </td>
-                      <td rowSpan={1} class="default">
+                      <td rowSpan={1} className="default">
                         [N/A]
                       </td>
                     </>
@@ -311,7 +318,11 @@ const App = () => {
                       </div>
                     ) : (
                       <>
-                        <td>{answer.created_at}</td>
+                        <td>
+                          {moment
+                            .unix(answer.created_at)
+                            .format("MMMM Do YYYY, h:mm:ss a")}
+                        </td>
                         <td>{answer.expression_answer}</td>
                         <td>{answer.creator}</td>
                       </>
