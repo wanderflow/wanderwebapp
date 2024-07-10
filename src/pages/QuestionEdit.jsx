@@ -263,7 +263,7 @@ const App = () => {
                       </td>
                     </>
                   )}
-                  <td rowSpan={question.answers.length}>
+                  <td>
                     <div className="action-buttons">
                       <button
                         onClick={() =>
@@ -279,6 +279,7 @@ const App = () => {
                     </div>
                   </td>
                 </tr>
+
                 {question.answers.slice(1).map((answer, index) => (
                   <tr key={`${question.PK}-${index}`} className="answer-row">
                     {editingItem.type === "answer" &&
@@ -304,6 +305,21 @@ const App = () => {
                         <td>{answer.creator}</td>
                       </>
                     )}
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          onClick={() =>
+                            startEdit(
+                              "question",
+                              question.questionID,
+                              question.express_question
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </React.Fragment>
