@@ -26,7 +26,7 @@ const App = () => {
         setQuestions(parsedQuestions);
         setFilteredQuestions(parsedQuestions);
       })
-      .catch((error) => console.error("Error fetching CSV:", error));
+      .catch((error) => console.error("Error fetching express:", error));
 
     fetch("data/expression.csv")
       .then((response) => response.text())
@@ -34,7 +34,7 @@ const App = () => {
         const parsedAnswers = parseCSV(data);
         setAnswers(parsedAnswers);
       })
-      .catch((error) => console.error("Error fetching answers CSV:", error));
+      .catch((error) => console.error("Error fetching expressions:", error));
   }, []);
 
   const parseCSV = (csvString) => {
@@ -58,27 +58,46 @@ const App = () => {
   const handleSearchChange = (e) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
-    filterQuestions(searchTerm, answerSearchTerm);
+    filterQuestions(searchTerm);
   };
 
   const handleAnswerSearchChange = (e) => {
     const searchTerm = e.target.value;
     setAnswerSearchTerm(searchTerm);
-    filterQuestions(searchTerm, answerSearchTerm);
+    if (searchTerm === "") {
+      setFilteredQuestions(questions);
+    } else {
+      filterAnswers(searchTerm);
+    }
   };
 
-  const filterQuestions = (questionTerm, answerTerm) => {
-    const filtered = questions.filter(
-      (question) =>
-        question.express_question
-          .toLowerCase()
-          .includes(questionTerm.toLowerCase()) ||
-        answers.some(
-          (answer) =>
-            answer.questionID === question.questionID &&
-            answer.answerText.toLowerCase().includes(answerTerm.toLowerCase())
-        )
+  const filterQuestions = (questionTerm) => {
+    const filtered = questions.filter((question) =>
+      question.express_question
+        .toLowerCase()
+        .includes(questionTerm.toLowerCase())
     );
+    setFilteredQuestions(filtered);
+    setCurrentPage(1);
+  };
+
+  const filterAnswers = (answerTerm) => {
+    const filtered = questions.reduce((acc, question) => {
+      const matchingAnswers = answers.filter(
+        (answer) =>
+          answer.express_pk === question.PK &&
+          answer.expression_answer
+            .toLowerCase()
+            .includes(answerTerm.toLowerCase())
+      );
+      if (matchingAnswers.length > 0) {
+        acc.push({
+          ...question,
+          answers: matchingAnswers,
+        });
+      }
+      return acc;
+    }, []);
     setFilteredQuestions(filtered);
     setCurrentPage(1);
   };
@@ -94,7 +113,7 @@ const App = () => {
   const saveEdit = () => {
     if (editingItem.type === "question") {
       const updatedQuestions = questions.map((question) =>
-        question.questionID === editingItem.id
+        question.PK === editingItem.id
           ? { ...question, express_question: editingItem.text }
           : question
       );
@@ -102,30 +121,23 @@ const App = () => {
       setFilteredQuestions(updatedQuestions);
     } else if (editingItem.type === "answer") {
       const updatedAnswers = answers.map((answer) =>
-        answer.answerID === editingItem.id
-          ? { ...answer, answerText: editingItem.text }
+        answer.PK_x === editingItem.id
+          ? { ...answer, expression_answer: editingItem.text }
           : answer
       );
       setAnswers(updatedAnswers);
+      setFilteredAnswers(updatedQuestions);
     }
     setEditingItem({ type: "", id: null, text: "" });
   };
 
   const handleDeleteQuestion = (questionID) => {
     const updatedQuestions = questions.filter(
-      (question) => question.questionID !== questionID
+      (question) => question.PK !== questionID
     );
     setQuestions(updatedQuestions);
     setFilteredQuestions(updatedQuestions);
     alert(`Deleted question with ID ${questionID}`);
-  };
-
-  const handleDeleteAnswer = (answerID) => {
-    const updatedAnswers = answers.filter(
-      (answer) => answer.answerID !== answerID
-    );
-    setAnswers(updatedAnswers);
-    alert(`Deleted answer with ID ${answerID}`);
   };
 
   // Merge questions with answers
@@ -194,7 +206,7 @@ const App = () => {
                   </td>
                   <td rowSpan={question.answers.length}>
                     {editingItem.type === "question" &&
-                    editingItem.id === question.questionID ? (
+                    editingItem.id === question.PK ? (
                       <div>
                         <input
                           type="text"
@@ -206,8 +218,6 @@ const App = () => {
                             })
                           }
                         />
-                        <button onClick={saveEdit}>Save</button>
-                        <button onClick={cancelEdit}>Cancel</button>
                       </div>
                     ) : (
                       <span title={question.express_question}>
@@ -230,7 +240,11 @@ const App = () => {
                       <div className="action-buttons">
                         <button
                           onClick={() =>
-                            startEdit(question.PK, question.express_question)
+                            startEdit(
+                              "question",
+                              question.PK,
+                              question.express_question
+                            )
                           }
                         >
                           Edit
@@ -249,6 +263,21 @@ const App = () => {
                       <td>{question.answers[0].created_at}</td>
                       <td>{question.answers[0].expression_answer}</td>
                       <td>{question.answers[0].creator}</td>
+                      <td>
+                        <div className="action-buttons">
+                          <button
+                            onClick={() =>
+                              startEdit(
+                                "answer",
+                                question.answers[0].PK_x,
+                                question.answers[0].expression_answer
+                              )
+                            }
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      </td>
                     </>
                   ) : (
                     <>
@@ -261,42 +290,24 @@ const App = () => {
                       <td rowSpan={1} class="default">
                         [N/A]
                       </td>
+                      <td rowSpan={1} class="default">
+                        [N/A]
+                      </td>
                     </>
                   )}
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        onClick={() =>
-                          startEdit(
-                            "question",
-                            question.questionID,
-                            question.express_question
-                          )
-                        }
-                      >
-                        Edit
-                      </button>
-                    </div>
-                  </td>
                 </tr>
 
                 {question.answers.slice(1).map((answer, index) => (
                   <tr key={`${question.PK}-${index}`} className="answer-row">
                     {editingItem.type === "answer" &&
                     editingItem.id === answer.PK_x ? (
-                      <div>
-                        <input
-                          type="text"
-                          value={editingItem.text}
-                          onChange={(e) =>
-                            setEditingItem({
-                              ...editingItem,
-                              text: e.target.value,
-                            })
-                          }
-                        />
-                        <button onClick={saveEdit}>Save</button>
-                        <button onClick={cancelEdit}>Cancel</button>
+                      <div className="action-buttons">
+                        <button onClick={() => saveEdit(answer.PK_x)}>
+                          Save
+                        </button>
+                        <button onClick={cancelEdit} className="editButton">
+                          Cancel
+                        </button>
                       </div>
                     ) : (
                       <>
@@ -310,9 +321,9 @@ const App = () => {
                         <button
                           onClick={() =>
                             startEdit(
-                              "question",
-                              question.questionID,
-                              question.express_question
+                              "answer",
+                              answer.PK_x,
+                              answer.expression_answer
                             )
                           }
                         >
