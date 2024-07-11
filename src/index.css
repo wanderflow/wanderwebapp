@@ -93,7 +93,7 @@
   }
   
   .search-icon {
-    margin-left: 10px;
+    margin-right: 10px;
     margin-right: 10px;
   }
   
@@ -112,27 +112,12 @@
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+    width: 120px;
   }
   
   th {
     background-color: #f2f2f2;
   }
-  
-  .inner-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .inner-table th, .inner-table td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-  }
-  
-  .inner-table th {
-    background-color: #e9e9e9;
-  }
-  
 
   .default {
     font-style: italic;

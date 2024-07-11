@@ -220,6 +220,11 @@ const App = () => {
                               text: e.target.value,
                             })
                           }
+                          style={{
+                            borderColor: "khaki",
+                            borderWidth: 3,
+                            width: question.length,
+                          }}
                         />
                       </div>
                     ) : (
@@ -281,6 +286,11 @@ const App = () => {
                                   text: e.target.value,
                                 })
                               }
+                              style={{
+                                borderColor: "darkkhaki",
+                                borderWidth: 3,
+                                width: question.answers[0].length,
+                              }}
                             />
                           </div>
                         ) : (
@@ -356,6 +366,11 @@ const App = () => {
                                 text: e.target.value,
                               })
                             }
+                            style={{
+                              borderColor: "darkkhaki",
+                              borderWidth: 3,
+                              width: answer.length,
+                            }}
                           />
                         </div>
                       ) : (
