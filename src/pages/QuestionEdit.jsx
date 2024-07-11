@@ -189,10 +189,10 @@ const App = () => {
         <table>
           <thead>
             <tr>
-              <th>Question Creation Date</th>
+              <th>Question Creation Date & Time</th>
               <th>Express Question</th>
               <th>Edit/ Delete</th>
-              <th>Answer Creation Date</th>
+              <th>Answer Creation Date & Time</th>
               <th>Expression Answers</th>
               <th>User</th>
               <th>Edit</th>
@@ -268,22 +268,54 @@ const App = () => {
                           .unix(question.answers[0].created_at)
                           .format("MMMM Do YYYY, h:mm:ss a")}
                       </td>
-                      <td>{question.answers[0].expression_answer}</td>
+                      <td>
+                        {editingItem.type === "answer" &&
+                        editingItem.id === question.answers[0].PK_x ? (
+                          <div>
+                            <input
+                              type="text"
+                              value={editingItem.text}
+                              onChange={(e) =>
+                                setEditingItem({
+                                  ...editingItem,
+                                  text: e.target.value,
+                                })
+                              }
+                            />
+                          </div>
+                        ) : (
+                          question.answers[0].expression_answer
+                        )}
+                      </td>
                       <td>{question.answers[0].creator}</td>
                       <td>
-                        <div className="action-buttons">
-                          <button
-                            onClick={() =>
-                              startEdit(
-                                "answer",
-                                question.answers[0].PK_x,
-                                question.answers[0].expression_answer
-                              )
-                            }
-                          >
-                            Edit
-                          </button>
-                        </div>
+                        {editingItem.type === "answer" &&
+                        editingItem.id === question.answers[0].PK_x ? (
+                          <div className="action-buttons">
+                            <button
+                              onClick={() => saveEdit(question.answers[0].PK_x)}
+                            >
+                              Save
+                            </button>
+                            <button onClick={cancelEdit} className="editButton">
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="action-buttons">
+                            <button
+                              onClick={() =>
+                                startEdit(
+                                  "answer",
+                                  question.answers[0].PK_x,
+                                  question.answers[0].expression_answer
+                                )
+                              }
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </>
                   ) : (
@@ -306,41 +338,57 @@ const App = () => {
 
                 {question.answers.slice(1).map((answer, index) => (
                   <tr key={`${question.PK}-${index}`} className="answer-row">
-                    {editingItem.type === "answer" &&
-                    editingItem.id === answer.PK_x ? (
-                      <div className="action-buttons">
-                        <button onClick={() => saveEdit(answer.PK_x)}>
-                          Save
-                        </button>
-                        <button onClick={cancelEdit} className="editButton">
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <td>
-                          {moment
-                            .unix(answer.created_at)
-                            .format("MMMM Do YYYY, h:mm:ss a")}
-                        </td>
-                        <td>{answer.expression_answer}</td>
-                        <td>{answer.creator}</td>
-                      </>
-                    )}
                     <td>
-                      <div className="action-buttons">
-                        <button
-                          onClick={() =>
-                            startEdit(
-                              "answer",
-                              answer.PK_x,
-                              answer.expression_answer
-                            )
-                          }
-                        >
-                          Edit
-                        </button>
-                      </div>
+                      {moment
+                        .unix(answer.created_at)
+                        .format("MMMM Do YYYY, h:mm:ss a")}
+                    </td>
+                    <td>
+                      {editingItem.type === "answer" &&
+                      editingItem.id === answer.PK_x ? (
+                        <div>
+                          <input
+                            type="text"
+                            value={editingItem.text}
+                            onChange={(e) =>
+                              setEditingItem({
+                                ...editingItem,
+                                text: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      ) : (
+                        answer.expression_answer
+                      )}
+                    </td>
+                    <td>{answer.creator}</td>
+                    <td>
+                      {editingItem.type === "answer" &&
+                      editingItem.id === answer.PK_x ? (
+                        <div className="action-buttons">
+                          <button onClick={() => saveEdit(answer.PK_x)}>
+                            Save
+                          </button>
+                          <button onClick={cancelEdit} className="editButton">
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="action-buttons">
+                          <button
+                            onClick={() =>
+                              startEdit(
+                                "answer",
+                                answer.PK_x,
+                                answer.expression_answer
+                              )
+                            }
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
