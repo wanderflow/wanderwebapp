@@ -1,69 +1,50 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
+import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
-function Login(/*{ setToken }*/) {
-  const [usernameInput, setUsername] = useState("");
-  const [passwordInput, setPassword] = useState("");
-  const handleUserNameChange = (e) => {
-    setUsername(e.target.value);
-  };
+const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    let hardcoded = {
-      username: "admin",
-      password: "password123",
-    };
-    if (
-      usernameInput == hardcoded.username &&
-      passwordInput == hardcoded.password
-    ) {
-      const token = "13H2UThXTF";
-      sessionStorage.setItem("auth-token", token);
+    const hardcodedUsername = "admin";
+    const hardcodedPassword = "password123";
+
+    if (username === hardcodedUsername && password === hardcodedPassword) {
+      login();
+      navigate("/edit");
     } else {
-      //wrong combination
-      alert("wrong email or password combination");
+      alert("Invalid username or password");
     }
   };
 
   return (
-    <div className="container ">
-      <h1>Please Login</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
+    <div className="container">
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <div>
+          <label>Username:</label>
           <input
-            type="username"
-            className="form-control"
-            placeholder="Enter username"
-            value={usernameInput}
-            onChange={handleUserNameChange}
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
-        </label>
-        <label>
-          <p>Password</p>
+        </div>
+        <div>
+          <label>Password:</label>
           <input
             type="password"
-            autoComplete="new-password"
-            placeholder="Password"
-            value={passwordInput}
-            onChange={handlePasswordChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
-        </label>
-        <br />
-        <br />
-        <button type="submit">Enter</button>
+        </div>
+        <button type="submit">Log In</button>
       </form>
     </div>
   );
-}
+};
 
 export default Login;
-
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired,
-};
