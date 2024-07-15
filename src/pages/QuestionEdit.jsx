@@ -170,6 +170,7 @@ const App = () => {
   return (
     <div className="internal-container">
       <div className="search-container">
+        <h1 className="title">Wander Internal Tools</h1>
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"
@@ -177,6 +178,8 @@ const App = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
+        <br />
+        <br />
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"

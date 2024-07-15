@@ -39,6 +39,7 @@
   h5 {
     @apply font-sans font-normal text-xs text-gray-100;
   }
+  
 
 }
 
@@ -63,6 +64,10 @@
     @apply absolute text-red font-normal text-sm -bottom-5 pl-1
   }
 
+  input {
+    @apply text-base rounded-[8px] border
+  }
+
   .fixed-container {
     position: fixed;
     top: 60%;
@@ -74,6 +79,11 @@
     @apply font-light text-sm md:font-semibold md:text-base
   }
 
+  .title {
+    color: grey;
+    padding-bottom: 30px;
+  }
+
   .internal-container {
     display: flex;
     flex-direction: column;
@@ -81,6 +91,8 @@
     width: 100%;
     padding-left: 100px;
     padding-right: 100px;
+    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .search-container {
