@@ -196,6 +196,8 @@ const App = () => {
               <th>Question Creation Date & Time</th>
               <th>Tags</th>
               <th>Express Question</th>
+              <th># of Answers</th>
+              <th>Created By AI?</th>
               <th>Edit/ Delete</th>
               <th>Answer Creation Date & Time</th>
               <th>Expression Answers</th>
@@ -240,6 +242,10 @@ const App = () => {
                       </span>
                     )}
                   </td>
+                  <td rowSpan={question.answers.length}>
+                    {question.answers.length}
+                  </td>
+                  <td rowSpan={question.answers.length}></td>
                   <td rowSpan={question.answers.length}>
                     {editingItem.type === "question" &&
                     editingItem.id === question.PK ? (
