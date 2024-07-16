@@ -113,6 +113,7 @@ const App = () => {
   };
 
   const saveEdit = () => {
+    alert("You are about to edit this question");
     if (editingItem.type === "question") {
       const updatedQuestions = questions.map((question) =>
         question.PK === editingItem.id
@@ -193,11 +194,13 @@ const App = () => {
           <thead>
             <tr>
               <th>Question Creation Date & Time</th>
+              <th>Tags</th>
               <th>Express Question</th>
               <th>Edit/ Delete</th>
               <th>Answer Creation Date & Time</th>
               <th>Expression Answers</th>
               <th>User</th>
+              <th>Reported?</th>
               <th>Edit</th>
             </tr>
           </thead>
@@ -210,6 +213,7 @@ const App = () => {
                       .unix(question.created_at)
                       .format("MMMM Do YYYY, h:mm:ss a")}
                   </td>
+                  <td rowSpan={question.answers.length}></td>
                   <td rowSpan={question.answers.length}>
                     {editingItem.type === "question" &&
                     editingItem.id === question.PK ? (
@@ -301,6 +305,7 @@ const App = () => {
                         )}
                       </td>
                       <td>{question.answers[0].creator}</td>
+                      <td></td>
                       <td>
                         {editingItem.type === "answer" &&
                         editingItem.id === question.answers[0].PK_x ? (
@@ -345,6 +350,9 @@ const App = () => {
                       <td rowSpan={1} className="default">
                         [N/A]
                       </td>
+                      <td rowSpan={1} className="default">
+                        [N/A]
+                      </td>
                     </>
                   )}
                 </tr>
@@ -381,6 +389,7 @@ const App = () => {
                       )}
                     </td>
                     <td>{answer.creator}</td>
+                    <td></td>
                     <td>
                       {editingItem.type === "answer" &&
                       editingItem.id === answer.PK_x ? (
