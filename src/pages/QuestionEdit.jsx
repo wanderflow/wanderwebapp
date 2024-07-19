@@ -121,7 +121,35 @@ const App = () => {
           value={searchExpress}
           onChange={handleSearchExpress}
         />
+
+        <form>
+          <div>
+            <label>
+              Enter Page Number:
+              <input
+                type="number"
+                value={pageNumber}
+                onChange={handlePageNumberChange}
+                min="1"
+                required
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              Enter Page Size:
+              <input
+                type="number"
+                value={pageSize}
+                onChange={handlePageSizeChange}
+                min="1"
+                required
+              />
+            </label>
+          </div>
+        </form>
       </div>
+
       <br />
       <table>
         <thead>
@@ -204,32 +232,6 @@ const App = () => {
           )}
         </tbody>
       </table>
-      <form>
-        <div>
-          <label>
-            Enter Page Number:
-            <input
-              type="number"
-              value={pageNumber}
-              onChange={handlePageNumberChange}
-              min="1"
-              required
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Enter Page Size:
-            <input
-              type="number"
-              value={pageSize}
-              onChange={handlePageSizeChange}
-              min="1"
-              required
-            />
-          </label>
-        </div>
-      </form>
     </div>
   );
 };
