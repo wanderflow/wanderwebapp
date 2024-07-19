@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { expressionsExpress } from "@/api";
+import { deleteExpression } from "@/api";
+import { deleteExpress } from "@/api";
 import moment from "moment";
 import "moment/locale/en-gb";
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [answerSearchTerm, setAnswerSearchTerm] = useState("");
-  const [filteredQuestions, setFilteredQuestions] = useState([]);
+  const [searchExpress, setSearchExpress] = useState("");
 
   const [allData, setAllData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
@@ -29,13 +29,13 @@ const App = () => {
       dataSoFar[express_question].push(item);
       return dataSoFar;
     }, {});
-    console.log(grouped);
     setAllData(grouped);
+    console.log(allData);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (pageSize != 0 && pageNumber.length != 0) {
+    if (pageSize != 0 || pageNumber.length != 0) {
       getexpressionsExpress();
     }
   });
@@ -58,52 +58,56 @@ const App = () => {
   };
 
   // search functions
-
-  const handleSearchChange = (e) => {
-    const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
-    filterQuestions(searchTerm);
+  const handleSearchExpress = (event) => {
+    setSearchExpress(event.target.value);
   };
 
-  const handleAnswerSearchChange = (e) => {
-    const searchTerm = e.target.value;
-    setAnswerSearchTerm(searchTerm);
-    if (searchTerm === "") {
-      setFilteredQuestions(questions);
-    } else {
-      filterAnswers(searchTerm);
+  const filteredData = Object.keys(allData).map((question) =>
+    allData[question].filter((item) =>
+      item.express_question.toLowerCase().includes(searchExpress.toLowerCase())
+    )
+  );
+
+  // edit and delete functions
+  const handleDeleteExpress = async (express_pk, express_sk) => {
+    try {
+      const toBeDeleted = await deleteExpress({
+        express_pk: express_pk,
+        express_sk: express_sk,
+      });
+      if (!toBeDeleted.ok) {
+        setAllData(
+          allData.data.filter(
+            (item) =>
+              item.express_pk !== express_pk && item.express_sk !== express_sk
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setError(error);
     }
   };
 
-  const filterQuestions = (questionTerm) => {
-    const filtered = questions.filter((question) =>
-      question.express_question
-        .toLowerCase()
-        .includes(questionTerm.toLowerCase())
-    );
-    setFilteredQuestions(filtered);
-    setCurrentPage(1);
-  };
-
-  const filterAnswers = (answerTerm) => {
-    const filtered = questions.reduce((acc, question) => {
-      const matchingAnswers = answers.filter(
-        (answer) =>
-          answer.express_pk === question.PK &&
-          answer.expression_answer
-            .toLowerCase()
-            .includes(answerTerm.toLowerCase())
-      );
-      if (matchingAnswers.length > 0) {
-        acc.push({
-          ...question,
-          answers: matchingAnswers,
-        });
+  const handleDeleteExpression = async (expression_pk, expression_sk) => {
+    try {
+      const toBeDeleted = await deleteExpression({
+        expression_pk: expression_pk,
+        expression_sk: expression_sk,
+      });
+      if (!toBeDeleted.ok) {
+        setAllData(
+          allData.data.filter(
+            (item) =>
+              item.expression_pk !== expression_pk &&
+              item.expression_sk !== expression_sk
+          )
+        );
       }
-      return acc;
-    }, []);
-    setFilteredQuestions(filtered);
-    setCurrentPage(1);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setError(error);
+    }
   };
 
   return (
@@ -113,18 +117,9 @@ const App = () => {
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"
-          placeholder="Search questions..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        <br />
-        <br />
-        <FontAwesomeIcon icon={faSearch} className="search-icon" />
-        <input
-          type="text"
-          placeholder="Search answers..."
-          value={answerSearchTerm}
-          onChange={handleAnswerSearchChange}
+          placeholder="Search by keywords"
+          value={searchExpress}
+          onChange={handleSearchExpress}
         />
       </div>
       <br />
@@ -145,34 +140,44 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(allData).map((question, index) =>
-            allData[question].map((item, itemIndex) => (
+          {Object.keys(filteredData).map((question) =>
+            filteredData[question].map((item, itemIndex) => (
               <tr key={itemIndex}>
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td rowSpan={filteredData[question].length}>
                     {moment.unix(item.SK_x).format("MMMM Do YYYY, h:mm:ss a")}
                   </td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>{/*Tags*/}</td>
+                  <td rowSpan={filteredData[question].length}>{/*Tags*/}</td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td rowSpan={filteredData[question].length}>
                     {item.express_question}
                   </td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
-                    {allData[question].length}
+                  <td rowSpan={filteredData[question].length}>
+                    {filteredData[question].length}
                   </td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td rowSpan={filteredData[question].length}>
                     {/*Created by AI*/}
                   </td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>{/*Edit/ Delete*/}</td>
+                  <td rowSpan={filteredData[question].length}>
+                    {
+                      <button
+                        onClick={() =>
+                          handleDeleteExpress(item.express_pk, item.express_sk)
+                        }
+                      >
+                        Delete
+                      </button>
+                    }
+                  </td>
                 )}
                 <td>
                   {moment
@@ -182,7 +187,18 @@ const App = () => {
                 <td>{item.expression_answer}</td>
                 <td>{item.creator}</td>
                 <td></td>
-                <td></td>
+                <td>
+                  <button
+                    onClick={() =>
+                      handleDeleteExpression(
+                        item.expression_pk,
+                        item.expression_sk
+                      )
+                    }
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))
           )}
