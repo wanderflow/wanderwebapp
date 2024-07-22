@@ -6,9 +6,13 @@ import { deleteExpression } from "@/api";
 import { deleteExpress } from "@/api";
 import moment from "moment";
 import "moment/locale/en-gb";
+import Modal from "./Modal";
 
 const App = () => {
   const [searchExpress, setSearchExpress] = useState("");
+
+  const [deleteInfo, setDeleteInfo] = useState({ pk: null, sk: null });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [allData, setAllData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
@@ -30,7 +34,6 @@ const App = () => {
       return dataSoFar;
     }, {});
     setAllData(grouped);
-    console.log(allData);
     setLoading(false);
   };
 
@@ -82,6 +85,8 @@ const App = () => {
               item.express_pk !== express_pk && item.express_sk !== express_sk
           )
         );
+        setDeleteInfo({ pk: null, sk: null });
+        setIsModalOpen(false);
       }
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -103,11 +108,24 @@ const App = () => {
               item.expression_sk !== expression_sk
           )
         );
+        setDeleteInfo({ pk: null, sk: null });
+        setIsModalOpen(false);
       }
     } catch (error) {
       console.error("Error deleting data:", error);
       setError(error);
     }
+  };
+
+  // handles pop ups in delete function
+  const openModal = (pk, sk) => {
+    setDeleteInfo({ pk, sk });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setDeleteInfo({ pk: null, sk: null });
+    setIsModalOpen(false);
   };
 
   return (
@@ -196,15 +214,14 @@ const App = () => {
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={filteredData[question].length}>
-                    {
-                      <button
-                        onClick={() =>
-                          handleDeleteExpress(item.express_pk, item.express_sk)
-                        }
-                      >
-                        Delete
-                      </button>
-                    }
+                    <button
+                      className="deleteButton"
+                      onClick={() =>
+                        openModal(item.express_pk, item.express_sk)
+                      }
+                    >
+                      Delete
+                    </button>
                   </td>
                 )}
                 <td>
@@ -217,11 +234,9 @@ const App = () => {
                 <td></td>
                 <td>
                   <button
+                    className="deleteButton"
                     onClick={() =>
-                      handleDeleteExpression(
-                        item.expression_pk,
-                        item.expression_sk
-                      )
+                      openModal(item.expression_pk, item.expression_sk)
                     }
                   >
                     Delete
@@ -232,6 +247,11 @@ const App = () => {
           )}
         </tbody>
       </table>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={() => handleDeleteExpress(deleteInfo.pk, deleteInfo.sk)}
+      />
     </div>
   );
 };

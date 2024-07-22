@@ -128,8 +128,9 @@ const Home = () => {
             fostering authentic connections.
           </p>
           <p className="mb-4 home-p">
-            Give <span className="font-semibold md:text-lg">Wander Social</span> a try! We are early stage, and would really
-            appreciate any thoughts and feedback!
+            Give <span className="font-semibold md:text-lg">Wander Social</span>{" "}
+            a try! We are at an early stage, and would really appreciate any
+            thoughts and feedback!
           </p>
           <a
             href="https://apps.apple.com/app/apple-store/id6474634049?pt=126456033&ct=website&mt=8"
