@@ -39,6 +39,7 @@
   h5 {
     @apply font-sans font-normal text-xs text-gray-100;
   }
+  
 
 }
 
@@ -63,6 +64,10 @@
     @apply absolute text-red font-normal text-sm -bottom-5 pl-1
   }
 
+  input {
+    @apply text-base rounded-[8px] border
+  }
+
   .fixed-container {
     position: fixed;
     top: 60%;
@@ -73,5 +78,101 @@
   .home-p {
     @apply font-light text-sm md:font-semibold md:text-base
   }
+
+  .title {
+    color: grey;
+    padding-bottom: 30px;
+  }
+
+  .internal-container {
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-left: 100px;
+    padding-right: 100px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+
+  .search-container {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 10px;
+    z-index: 1;
+    width: 100%;
+  }
+  
+  .search-icon {
+    margin-right: 10px;
+    margin-right: 10px;
+  }
+  
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    width: px;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+
+  .default {
+    font-style: italic;
+    color: grey;
+  }
+
+  .action-buttons {
+    gap: 5px;
+  }
+  
+  .editButton {
+    background-color: lightgray;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+  }
+  
+  .deleteButton {
+    background-color: crimson;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
   
 }
