@@ -20,7 +20,7 @@ import {
 import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import { AuthProvider } from "./pages/AuthContext";
-import PrivateRoute from "./pages/PrivateRoute";
+import PrivateRoute from "./pages/internal_tools/PrivateRoute";
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
