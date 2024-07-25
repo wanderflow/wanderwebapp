@@ -29,3 +29,20 @@ export const createInviteUserRelation = (param) =>
     import.meta.env.VITE_EXPRESS_BACKEND + "/delete_express",
     param
   );
+
+  export const editExpress = (param) =>
+  request.post(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/update_express",
+    param,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  export const searchExpress = (param) =>
+  request.post(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/search_express",
+    param
+  );

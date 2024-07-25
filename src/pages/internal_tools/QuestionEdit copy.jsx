@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { expressionsExpress } from "@/api";
-import { deleteExpression } from "@/api";
-import { deleteExpress } from "@/api";
+import {
+  expressionsExpress,
+  deleteExpression,
+  deleteExpress,
+  editExpress,
+  searchExpress,
+} from "@/api";
 import moment from "moment";
 import "moment/locale/en-gb";
-import Modal from "./Modal";
+import Modal from "./DeleteModal";
 
 const App = () => {
   const [searchExpress, setSearchExpress] = useState("");
