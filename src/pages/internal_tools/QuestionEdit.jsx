@@ -6,7 +6,6 @@ import {
   searchExpress,
   editExpress,
 } from "@/api";
-import DeleteModal from "./DeleteModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
@@ -16,23 +15,18 @@ const QuestionsTable = () => {
   const [allData, setAllData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(100);
-  const [originalQuestion, setOriginalQuestion] = useState("");
   const [originalData, setOriginalData] = useState({});
 
   const [searchTerm, setSearchTerm] = useState("");
 
   const [loading, setLoading] = useState(true);
 
-  const [editingId, setEditingId] = useState(null);
-  const [editedQuestion, setEditedQuestion] = useState("");
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [newExpressQuestion, setNewExpressQuestion] = useState("");
 
-  const [showModal, setShowModal] = useState(false);
-  const [deleteType, setDeleteType] = useState("");
-  const [deleteId, setDeleteId] = useState(null);
-
-  useEffect(() => {
-    const getQuestions = async () => {
-      const response = await expressionsExpress({
+  const getQuestions = async () => {
+    try {
+      let response = await expressionsExpress({
         page: pageNumber,
         page_size: pageSize,
       });
@@ -46,9 +40,16 @@ const QuestionsTable = () => {
       setOriginalData(grouped);
       setAllData(grouped);
       setLoading(false);
-    };
-    getQuestions();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (pageSize != 0 || pageNumber.length != 0) {
+      getQuestions();
+    }
+  });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -56,11 +57,17 @@ const QuestionsTable = () => {
 
   // enter page number and size
   const handlePageNumberChange = (event) => {
-    setPageNumber(event.target.value);
+    const newPageNumber = Number(event.target.value);
+    if (newPageNumber > 0) {
+      setPageNumber(newPageNumber);
+    }
   };
 
   const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
+    const newPageSize = Number(event.target.value);
+    if (newPageSize > 0) {
+      setPageSize(newPageSize);
+    }
   };
 
   // search functions
@@ -100,91 +107,103 @@ const QuestionsTable = () => {
   };
 
   // edit functions
-  const handleEdit = (id, question) => {
-    setEditingId(id);
-    setOriginalQuestion(question);
-    setEditedQuestion(question);
+  const handleEditQuestion = (
+    express_pk,
+    express_sk,
+    currentExpressQuestion
+  ) => {
+    setEditingQuestion({ express_pk, express_sk });
+    setNewExpressQuestion(currentExpressQuestion);
   };
 
-  const handleSave = async () => {
-    try {
-      const question = Object.values(allData)
-        .flat()
-        .find((q) => q.express_pk === editingId);
-      if (question) {
-        const payload = {
-          express_pk: question.express_pk,
-          express_sk: question.express_sk,
-          new_express: editedQuestion,
-        };
-        console.log("Saving question:", payload);
-
-        const response = await editExpress(payload);
-        console.log("Save response:", response);
-        setAllData((prevData) => {
-          const updatedData = { ...prevData };
-          for (const key in updatedData) {
-            updatedData[key] = updatedData[key].map((q) =>
-              q.express_pk === editingId
-                ? { ...q, express_question: editedQuestion }
-                : q
-            );
-          }
-          return updatedData;
-        });
-        setEditingId(null);
-        setEditedQuestion("");
-        setOriginalQuestion("");
-        console.log(editingId);
-      }
-    } catch (error) {
-      console.error(
-        "Error updating question:",
-        error.response?.data || error.message || error
-      );
+  const handleSaveEditQuestion = async () => {
+    const { express_pk, express_sk } = editingQuestion;
+    if (!newExpressQuestion.trim()) {
+      alert("The question cannot be empty.");
+      return;
     }
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setEditedQuestion("");
-    setOriginalQuestion("");
+    if (window.confirm("Are you sure you want to save this edit?")) {
+      try {
+        await editExpress({
+          express_pk,
+          express_sk,
+          new_express: newExpressQuestion,
+        });
+        const updatedData = { ...allData };
+        console.log(updatedData);
+        for (const key in updatedData) {
+          updatedData[key] = updatedData[key].map((item) => {
+            if (item.express_pk === express_pk && item.SK_y === express_sk) {
+              return { ...item, express_question: newExpressQuestion };
+            }
+            return item;
+          });
+          if (updatedData[key].length === 0) delete updatedData[key];
+        }
+        setAllData(updatedData);
+        setEditingQuestion(null);
+        setNewExpressQuestion("");
+        console.log(allData);
+      } catch (error) {
+        console.error("Error editing question:", error);
+      }
+    }
   };
 
   // delete functions
-  const handleDelete = async () => {
-    if (deleteType === "question") {
-      await deleteExpress({
-        express_pk: express_pk,
-        express_sk: express_sk,
-      });
-    } else if (deleteType === "answer") {
-      await deleteExpression({
-        expression_pk: expression_pk,
-        expression_sk: expression_sk,
-      });
+  const handleDeleteQuestion = async (express_pk, express_sk) => {
+    if (window.confirm("Are you sure you want to delete this question?")) {
+      try {
+        const success = await deleteExpress({ express_pk, express_sk });
+        console.log("Delete Response:", success.message);
+
+        const updatedData = { ...allData };
+        for (const key in updatedData) {
+          updatedData[key] = updatedData[key].filter(
+            (item) =>
+              !(item.express_pk === express_pk && item.SK_y === express_sk)
+          );
+          if (updatedData[key].length === 0) delete updatedData[key];
+        }
+        setAllData(updatedData);
+      } catch (error) {
+        console.error("Error deleting question:", error);
+        alert(
+          `Error deleting question: ${JSON.stringify(
+            error.success ? error.success.data : error.message
+          )}`
+        );
+      }
     }
-
-    // modal
-    setShowModal(false);
-    const response = await expressionsExpress();
-    const nestledData = response.data;
-    const grouped = nestledData.reduce((dataSoFar, item) => {
-      const { express_question } = item;
-      if (!dataSoFar[express_question]) dataSoFar[express_question] = [];
-      dataSoFar[express_question].push(item);
-      return dataSoFar;
-    }, {});
-    setAllData(grouped);
   };
 
-  const openModal = (type, id) => {
-    setDeleteType(type);
-    setDeleteId(id);
-    setShowModal(true);
+  const handleDeleteAnswer = async (expression_pk, expression_sk) => {
+    if (window.confirm("Are you sure you want to delete this answer?")) {
+      try {
+        const success = await deleteExpression({
+          expression_pk,
+          expression_sk,
+        });
+        console.log("Delete Answer Response:", success);
+        const updatedData = { ...allData };
+        for (const key in updatedData) {
+          updatedData[key] = updatedData[key].filter(
+            (item) =>
+              !(item.PK_x === expression_pk && item.SK_x === expression_sk)
+          );
+          if (updatedData[key].length === 0) delete updatedData[key];
+        }
+        setAllData(updatedData);
+      } catch (error) {
+        console.error("Error deleting answer:", error);
+        alert(
+          `Error deleting answer: ${JSON.stringify(
+            error.success ? error.success.data : error.message
+          )}`
+        );
+      }
+    }
   };
-
-  const handleClose = () => setShowModal(false);
 
   return (
     <div className="internal-container">
@@ -242,7 +261,7 @@ const QuestionsTable = () => {
             <th>Expression Answers</th>
             <th>User</th>
             <th>Reported?</th>
-            <th>Edit</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -251,7 +270,7 @@ const QuestionsTable = () => {
               <tr key={itemIndex}>
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {moment.unix(item.SK_x).format("MMMM Do YYYY, h:mm:ss a")}
+                    {moment.unix(item.SK_y).format("MMMM Do YYYY, h:mm:ss a")}
                   </td>
                 )}
                 {itemIndex === 0 && (
@@ -259,12 +278,31 @@ const QuestionsTable = () => {
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {editingId === item.express_pk ? (
-                      <input
-                        type="text"
-                        value={editedQuestion}
-                        onChange={(e) => setEditedQuestion(e.target.value)}
-                      />
+                    {editingQuestion &&
+                    editingQuestion.express_pk === item.express_pk &&
+                    editingQuestion.express_sk === item.SK_y ? (
+                      <>
+                        <input
+                          type="text"
+                          value={newExpressQuestion}
+                          onChange={(e) =>
+                            setNewExpressQuestion(e.target.value)
+                          }
+                        />
+                        <button
+                          onClick={() =>
+                            handleSaveEditQuestion(
+                              item.express_pk,
+                              item.express_sk
+                            )
+                          }
+                        >
+                          Save
+                        </button>
+                        <button onClick={() => setEditingQuestion(null)}>
+                          Cancel
+                        </button>
+                      </>
                     ) : (
                       item.express_question
                     )}
@@ -277,35 +315,32 @@ const QuestionsTable = () => {
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {/*Created by AI*/}
+                    {/*item.created_by_ai ? 'Yes' : 'No'*/}
                   </td>
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {editingId === item.express_pk ? (
-                      <div className="action-buttons">
-                        <button onClick={handleSave}>Save</button>
-                        <button className="editButton" onClick={handleCancel}>
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="action-buttons">
-                        <button
-                          onClick={() =>
-                            handleEdit(item.express_pk, item.express_question)
-                          }
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="deleteButton"
-                          onClick={() => openModal("question", item.express_pk)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                    <div className="action-buttons">
+                      <button
+                        onClick={() =>
+                          handleEditQuestion(
+                            item.express_pk,
+                            item.SK_y,
+                            item.express_question
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="deleteButton"
+                        onClick={() =>
+                          handleDeleteQuestion(item.express_pk, item.SK_y)
+                        }
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 )}
                 <td>
@@ -319,7 +354,7 @@ const QuestionsTable = () => {
                 <td>
                   <button
                     className="deleteButton"
-                    onClick={() => openModal("answer", item.expression_pk)}
+                    onClick={() => handleDeleteAnswer(item.PK_x, item.SK_x)}
                   >
                     Delete
                   </button>
@@ -329,12 +364,6 @@ const QuestionsTable = () => {
           )}
         </tbody>
       </table>
-      <DeleteModal
-        show={showModal}
-        handleClose={handleClose}
-        handleDelete={handleDelete}
-        type={deleteType}
-      />
     </div>
   );
 };

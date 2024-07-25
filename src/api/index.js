@@ -34,11 +34,7 @@ export const createInviteUserRelation = (param) =>
   request.post(
     import.meta.env.VITE_EXPRESS_BACKEND + "/update_express",
     param,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
+
   );
 
   export const searchExpress = (param) =>
