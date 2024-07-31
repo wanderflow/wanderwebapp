@@ -11,18 +11,26 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import "moment/locale/en-gb";
 
+// calls all data
 const QuestionsTable = () => {
   const [allData, setAllData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(100);
-  const [originalData, setOriginalData] = useState({});
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchWord, setSearchWord] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
+  const [filterAI, setFilterAI] = useState(null);
+
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [newExpressQuestion, setNewExpressQuestion] = useState("");
+
+  const [sortConfig, setSortConfig] = useState({
+    key: "numberOfAnswers",
+    direction: "asc",
+  });
 
   const getQuestions = async () => {
     try {
@@ -37,8 +45,9 @@ const QuestionsTable = () => {
         dataSoFar[express_question].push(item);
         return dataSoFar;
       }, {});
-      setOriginalData(grouped);
-      setAllData(grouped);
+      if (!isSearching) {
+        setAllData(grouped);
+      }
       setLoading(false);
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -46,64 +55,56 @@ const QuestionsTable = () => {
   };
 
   useEffect(() => {
-    if (pageSize != 0 || pageNumber.length != 0) {
-      getQuestions();
-    }
-  });
+    getQuestions();
+  }, [isSearching]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   // enter page number and size
-  const handlePageNumberChange = (event) => {
-    const newPageNumber = Number(event.target.value);
-    if (newPageNumber > 0) {
-      setPageNumber(newPageNumber);
+  const handlePageNumberChange = (e) => {
+    const value = e.target.value;
+    if (value === "" || isNaN(value) || Number(value) < 1) {
+      setPageNumber("");
+    } else {
+      setPageNumber(Number(value));
     }
   };
 
-  const handlePageSizeChange = (event) => {
-    const newPageSize = Number(event.target.value);
-    if (newPageSize > 0) {
-      setPageSize(newPageSize);
+  const handlePageSizeChange = (e) => {
+    const value = e.target.value;
+    if (value === "" || isNaN(value) || Number(value) < 1) {
+      setPageSize("");
+    } else {
+      setPageSize(Number(value));
     }
   };
 
   // search functions
   const handleSearch = async () => {
-    if (searchTerm.trim() === "") {
-      setAllData(originalData);
+    if (searchWord.trim() === "") {
+      setIsSearching(false);
       return;
     }
-
+    setIsSearching(true);
     try {
-      const response = await searchExpress({
-        search_word: searchTerm,
+      let response = await searchExpress({
+        search_word: searchWord,
         page: pageNumber,
         page_size: pageSize,
       });
-
-      if (response && response.data) {
-        const nestledData = response.data;
-        const grouped = nestledData.reduce((dataSoFar, item) => {
-          const { express_question } = item;
-          if (!dataSoFar[express_question]) dataSoFar[express_question] = [];
-          dataSoFar[express_question].push(item);
-          return dataSoFar;
-        }, {});
-        setAllData(grouped);
-      }
+      const nestledData = response.data;
+      const grouped = nestledData.reduce((dataSoFar, item) => {
+        const { express_question } = item;
+        if (!dataSoFar[express_question]) dataSoFar[express_question] = [];
+        dataSoFar[express_question].push(item);
+        return dataSoFar;
+      }, {});
+      setAllData(grouped);
     } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
+      console.error("Error fetching questions:", error);
     }
-  };
-
-  const handleReset = () => {
-    setSearchTerm("");
-    setAllData(originalData);
-    setPageNumber(1);
-    setPageSize(100);
   };
 
   // edit functions
@@ -205,44 +206,124 @@ const QuestionsTable = () => {
     }
   };
 
+  // sorting functions for number of questions
+  const handleSort = (key) => {
+    const direction =
+      sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key, direction });
+
+    const sortedData = Object.entries(allData).sort((a, b) => {
+      const numA = a[1].length;
+      const numB = b[1].length;
+
+      if (numA < numB) return direction === "asc" ? -1 : 1;
+      if (numA > numB) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    const sortedGroupedData = sortedData.reduce((acc, [key, items]) => {
+      acc[key] = items;
+      return acc;
+    }, {});
+
+    setAllData(sortedGroupedData);
+  };
+
+  // filter functions for AI
+  const applyFilters = (data) => {
+    let filteredData = { ...data };
+
+    if (filterAI !== null) {
+      filteredData = Object.entries(filteredData).reduce(
+        (acc, [key, items]) => {
+          acc[key] = items.filter((item) => item.createdByAI === filterAI);
+          return acc;
+        },
+        {}
+      );
+    }
+
+    return filteredData;
+  };
+
+  const handleFilterChange = (filterType, value) => {
+    if (filterType === "AI") {
+      setFilterAI(value);
+    }
+  };
+
+  const filteredData = applyFilters(allData);
+
   return (
     <div className="internal-container">
-      <div className="search-container">
+      <div
+        className="search-container"
+        style={{ display: "flex", alignItems: "center", gap: "20px" }}
+      >
         <h1 className="title">Wander Internal Tool</h1>
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchWord}
+          onChange={(e) => setSearchWord(e.target.value)}
           placeholder="Search..."
         />
-        <div style={{ width: "13%", display: "flex", gap: "10px" }}>
+        <div style={{ width: "10%", display: "flex", gap: "5px" }}>
           <button onClick={handleSearch}>Search</button>
-          <button onClick={handleReset}>Reset</button>
         </div>
-        <form>
-          <div>
+        <form
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            marginLeft: "20px",
+          }}
+        >
+          <div style={{ marginBottom: "10px" }}>
             <label>
               Enter Page Number:
               <input
                 type="number"
                 value={pageNumber}
                 onChange={handlePageNumberChange}
-                min="1"
+                min="0"
                 required
+                style={{ marginLeft: "5px" }}
               />
             </label>
           </div>
-          <div>
+          <div style={{ marginBottom: "10px" }}>
             <label>
               Enter Page Size:
               <input
                 type="number"
                 value={pageSize}
                 onChange={handlePageSizeChange}
-                min="1"
+                min="0"
                 required
+                style={{ marginLeft: "5px" }}
               />
+            </label>
+          </div>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                checked={filterAI === true}
+                onChange={() =>
+                  handleFilterChange("AI", filterAI === true ? null : true)
+                }
+              />
+              Created By AI?
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                checked={filterAI === false}
+                onChange={() =>
+                  handleFilterChange("AI", filterAI === false ? null : false)
+                }
+              />
+              Not Created By AI
             </label>
           </div>
         </form>
@@ -254,7 +335,11 @@ const QuestionsTable = () => {
             <th>Question Creation Date & Time</th>
             <th>Tags</th>
             <th>Express Question</th>
-            <th># of Answers</th>
+            <th onClick={() => handleSort("numberOfAnswers")}>
+              # of Answers{" "}
+              {sortConfig.key === "numberOfAnswers" &&
+                (sortConfig.direction === "asc" ? "🔼" : "🔽")}
+            </th>
             <th>Created By AI?</th>
             <th>Edit/ Delete</th>
             <th>Answer Creation Date & Time</th>
@@ -315,7 +400,7 @@ const QuestionsTable = () => {
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {/*item.created_by_ai ? 'Yes' : 'No'*/}
+                    {item.type ? "Yes" : "No"}
                   </td>
                 )}
                 {itemIndex === 0 && (
