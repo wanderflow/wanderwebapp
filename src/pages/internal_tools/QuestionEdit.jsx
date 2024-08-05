@@ -56,29 +56,23 @@ const QuestionsTable = () => {
 
   useEffect(() => {
     getQuestions();
-  }, [isSearching]);
+  }, [pageNumber, pageSize, isSearching]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   // enter page number and size
-  const handlePageNumberChange = (e) => {
-    const value = e.target.value;
-    if (value === "" || isNaN(value) || Number(value) < 1) {
-      setPageNumber("");
-    } else {
-      setPageNumber(Number(value));
-    }
+  const handlePageNumberChange = (event) => {
+    const value = event.target.value;
+    const newPageNumber = value === "" ? "" : parseInt(value, 10);
+    setPageNumber(newPageNumber > 0 ? newPageNumber : "");
   };
 
-  const handlePageSizeChange = (e) => {
-    const value = e.target.value;
-    if (value === "" || isNaN(value) || Number(value) < 1) {
-      setPageSize("");
-    } else {
-      setPageSize(Number(value));
-    }
+  const handlePageSizeChange = (event) => {
+    const value = event.target.value;
+    const newPageSize = value === "" ? "" : parseInt(value, 10);
+    setPageSize(newPageSize > 0 ? newPageSize : "");
   };
 
   // search functions
@@ -131,7 +125,6 @@ const QuestionsTable = () => {
           new_express: newExpressQuestion,
         });
         const updatedData = { ...allData };
-        console.log(updatedData);
         for (const key in updatedData) {
           updatedData[key] = updatedData[key].map((item) => {
             if (item.express_pk === express_pk && item.SK_y === express_sk) {
@@ -144,7 +137,6 @@ const QuestionsTable = () => {
         setAllData(updatedData);
         setEditingQuestion(null);
         setNewExpressQuestion("");
-        console.log(allData);
       } catch (error) {
         console.error("Error editing question:", error);
       }
@@ -230,29 +222,32 @@ const QuestionsTable = () => {
   };
 
   // filter functions for AI
-  const applyFilters = (data) => {
-    let filteredData = { ...data };
+  const applyFilters = () => {
+    let filteredData = { ...allData };
 
     if (filterAI !== null) {
       filteredData = Object.entries(filteredData).reduce(
         (acc, [key, items]) => {
-          acc[key] = items.filter((item) => item.createdByAI === filterAI);
+          acc[key] = items.filter((item) =>
+            filterAI === "AI" ? item.type === "AI" : item.type === null
+          );
           return acc;
         },
+
         {}
       );
     }
-
-    return filteredData;
+    console.log(filteredData);
+    setAllData(filteredData);
   };
 
   const handleFilterChange = (filterType, value) => {
     if (filterType === "AI") {
-      setFilterAI(value);
+      setFilterAI((prev) => (prev === value ? null : value));
     }
-  };
 
-  const filteredData = applyFilters(allData);
+    applyFilters();
+  };
 
   return (
     <div className="internal-container">
@@ -285,7 +280,7 @@ const QuestionsTable = () => {
                 type="number"
                 value={pageNumber}
                 onChange={handlePageNumberChange}
-                min="0"
+                min="1"
                 required
                 style={{ marginLeft: "5px" }}
               />
@@ -298,7 +293,7 @@ const QuestionsTable = () => {
                 type="number"
                 value={pageSize}
                 onChange={handlePageSizeChange}
-                min="0"
+                min="1"
                 required
                 style={{ marginLeft: "5px" }}
               />
@@ -308,20 +303,16 @@ const QuestionsTable = () => {
             <label>
               <input
                 type="checkbox"
-                checked={filterAI === true}
-                onChange={() =>
-                  handleFilterChange("AI", filterAI === true ? null : true)
-                }
+                checked={filterAI === "AI"}
+                onChange={() => handleFilterChange("AI", "AI")}
               />
               Created By AI?
             </label>
             <label>
               <input
                 type="checkbox"
-                checked={filterAI === false}
-                onChange={() =>
-                  handleFilterChange("AI", filterAI === false ? null : false)
-                }
+                checked={filterAI === "Not AI"}
+                onChange={() => handleFilterChange("AI", "Not AI")}
               />
               Not Created By AI
             </label>
@@ -400,7 +391,7 @@ const QuestionsTable = () => {
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {item.type ? "Yes" : "No"}
+                    {item.type ? "AI" : "Not AI"}
                   </td>
                 )}
                 {itemIndex === 0 && (
