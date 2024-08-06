@@ -22,7 +22,7 @@ const QuestionsTable = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const [filterAI, setFilterAI] = useState(null);
+  const [filterType, setFilterType] = useState("ALL");
 
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [newExpressQuestion, setNewExpressQuestion] = useState("");
@@ -56,29 +56,23 @@ const QuestionsTable = () => {
 
   useEffect(() => {
     getQuestions();
-  }, [isSearching]);
+  }, [pageNumber, pageSize, isSearching]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   // enter page number and size
-  const handlePageNumberChange = (e) => {
-    const value = e.target.value;
-    if (value === "" || isNaN(value) || Number(value) < 1) {
-      setPageNumber("");
-    } else {
-      setPageNumber(Number(value));
-    }
+  const handlePageNumberChange = (event) => {
+    const value = event.target.value;
+    const newPageNumber = value === "" ? "" : parseInt(value, 10);
+    setPageNumber(newPageNumber > 0 ? newPageNumber : "");
   };
 
-  const handlePageSizeChange = (e) => {
-    const value = e.target.value;
-    if (value === "" || isNaN(value) || Number(value) < 1) {
-      setPageSize("");
-    } else {
-      setPageSize(Number(value));
-    }
+  const handlePageSizeChange = (event) => {
+    const value = event.target.value;
+    const newPageSize = value === "" ? "" : parseInt(value, 10);
+    setPageSize(newPageSize > 0 ? newPageSize : "");
   };
 
   // search functions
@@ -131,7 +125,6 @@ const QuestionsTable = () => {
           new_express: newExpressQuestion,
         });
         const updatedData = { ...allData };
-        console.log(updatedData);
         for (const key in updatedData) {
           updatedData[key] = updatedData[key].map((item) => {
             if (item.express_pk === express_pk && item.SK_y === express_sk) {
@@ -144,7 +137,6 @@ const QuestionsTable = () => {
         setAllData(updatedData);
         setEditingQuestion(null);
         setNewExpressQuestion("");
-        console.log(allData);
       } catch (error) {
         console.error("Error editing question:", error);
       }
@@ -230,29 +222,20 @@ const QuestionsTable = () => {
   };
 
   // filter functions for AI
-  const applyFilters = (data) => {
-    let filteredData = { ...data };
-
-    if (filterAI !== null) {
-      filteredData = Object.entries(filteredData).reduce(
-        (acc, [key, items]) => {
-          acc[key] = items.filter((item) => item.createdByAI === filterAI);
-          return acc;
-        },
-        {}
-      );
-    }
-
-    return filteredData;
-  };
-
-  const handleFilterChange = (filterType, value) => {
+  const filteredData = Object.keys(allData).reduce((result, key) => {
+    let filteredItems;
     if (filterType === "AI") {
-      setFilterAI(value);
+      filteredItems = allData[key].filter((item) => item.type === "AI");
+    } else if (filterType === "NON_AI") {
+      filteredItems = allData[key].filter((item) => item.type !== "AI");
+    } else {
+      filteredItems = allData[key];
     }
-  };
-
-  const filteredData = applyFilters(allData);
+    if (filteredItems.length > 0) {
+      result[key] = filteredItems;
+    }
+    return result;
+  }, {});
 
   return (
     <div className="internal-container">
@@ -280,12 +263,12 @@ const QuestionsTable = () => {
         >
           <div style={{ marginBottom: "10px" }}>
             <label>
-              Enter Page Number:
+              Enter Page Number (min: 1, max: 100):
               <input
                 type="number"
                 value={pageNumber}
                 onChange={handlePageNumberChange}
-                min="0"
+                min="1"
                 required
                 style={{ marginLeft: "5px" }}
               />
@@ -293,37 +276,44 @@ const QuestionsTable = () => {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <label>
-              Enter Page Size:
+              Enter Page Size (min: 1, max: 1,000):
               <input
                 type="number"
                 value={pageSize}
                 onChange={handlePageSizeChange}
-                min="0"
+                min="1"
                 required
                 style={{ marginLeft: "5px" }}
               />
             </label>
           </div>
-          <div>
+          <div style={{ marginBottom: "10px" }}>
             <label>
               <input
-                type="checkbox"
-                checked={filterAI === true}
-                onChange={() =>
-                  handleFilterChange("AI", filterAI === true ? null : true)
-                }
+                type="radio"
+                value="ALL"
+                checked={filterType === "ALL"}
+                onChange={() => setFilterType("ALL")}
               />
-              Created By AI?
+              All Express
             </label>
             <label>
               <input
-                type="checkbox"
-                checked={filterAI === false}
-                onChange={() =>
-                  handleFilterChange("AI", filterAI === false ? null : false)
-                }
+                type="radio"
+                value="AI"
+                checked={filterType === "AI"}
+                onChange={() => setFilterType("AI")}
               />
-              Not Created By AI
+              AI-generated Express
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="NON_AI"
+                checked={filterType === "NON_AI"}
+                onChange={() => setFilterType("NON_AI")}
+              />
+              Non-AI-generated Express
             </label>
           </div>
         </form>
@@ -350,8 +340,8 @@ const QuestionsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(allData).map((question) =>
-            allData[question].map((item, itemIndex) => (
+          {Object.keys(filteredData).map((question) =>
+            filteredData[question].map((item, itemIndex) => (
               <tr key={itemIndex}>
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
@@ -400,7 +390,7 @@ const QuestionsTable = () => {
                 )}
                 {itemIndex === 0 && (
                   <td rowSpan={allData[question].length}>
-                    {item.type ? "Yes" : "No"}
+                    {item.type ? "AI" : "Not AI"}
                   </td>
                 )}
                 {itemIndex === 0 && (
