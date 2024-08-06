@@ -374,7 +374,10 @@ const QuestionsTable = () => {
                         >
                           Save
                         </button>
-                        <button onClick={() => setEditingQuestion(null)}>
+                        <button
+                          className="editButton"
+                          onClick={() => setEditingQuestion(null)}
+                        >
                           Cancel
                         </button>
                       </>
@@ -424,7 +427,7 @@ const QuestionsTable = () => {
                     .format("MMMM Do YYYY, h:mm:ss a")}
                 </td>
                 <td>{item.expression_answer}</td>
-                <td>{item.creator}</td>
+                <td>{item.creator.slice(5)}</td>
                 <td></td>
                 <td>
                   <button
