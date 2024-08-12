@@ -94,7 +94,7 @@ const QuestionsTable = () => {
     setIsSearching(true);
     try {
       let response = await searchExpress({
-        search_word: searchWord,
+        search_word: searchWord.trim(),
         page: pageNumber,
         page_size: pageSize,
       });
