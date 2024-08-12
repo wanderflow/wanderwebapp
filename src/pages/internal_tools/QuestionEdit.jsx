@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   expressionsExpress,
   deleteExpression,
@@ -13,6 +13,7 @@ import "moment/locale/en-gb";
 
 // calls all data
 const QuestionsTable = () => {
+  const [originalData, setOriginalData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(100);
@@ -26,6 +27,7 @@ const QuestionsTable = () => {
 
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [newExpressQuestion, setNewExpressQuestion] = useState("");
+  const textareaRef = useRef(null);
 
   const [sortConfig, setSortConfig] = useState({
     key: "numberOfAnswers",
@@ -47,6 +49,7 @@ const QuestionsTable = () => {
       }, {});
       if (!isSearching) {
         setAllData(grouped);
+        setOriginalData(grouped);
       }
       setLoading(false);
     } catch (error) {
@@ -56,7 +59,12 @@ const QuestionsTable = () => {
 
   useEffect(() => {
     getQuestions();
-  }, [pageNumber, pageSize, isSearching]);
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [pageNumber, pageSize, isSearching, newExpressQuestion]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -77,8 +85,10 @@ const QuestionsTable = () => {
 
   // search functions
   const handleSearch = async () => {
-    if (searchWord.trim() === "") {
+    console.log(searchWord);
+    if (searchWord.trim() === "" || searchWord === null) {
       setIsSearching(false);
+      setAllData(originalData);
       return;
     }
     setIsSearching(true);
@@ -227,7 +237,7 @@ const QuestionsTable = () => {
     if (filterType === "AI") {
       filteredItems = allData[key].filter((item) => item.type === "AI");
     } else if (filterType === "NON_AI") {
-      filteredItems = allData[key].filter((item) => item.type !== "AI");
+      filteredItems = allData[key].filter((item) => item.type === null);
     } else {
       filteredItems = allData[key];
     }
@@ -357,8 +367,8 @@ const QuestionsTable = () => {
                     editingQuestion.express_pk === item.express_pk &&
                     editingQuestion.express_sk === item.SK_y ? (
                       <>
-                        <input
-                          type="text"
+                        <textarea
+                          className="editTextBox"
                           value={newExpressQuestion}
                           onChange={(e) =>
                             setNewExpressQuestion(e.target.value)
@@ -427,7 +437,7 @@ const QuestionsTable = () => {
                     .format("MMMM Do YYYY, h:mm:ss a")}
                 </td>
                 <td>{item.expression_answer}</td>
-                <td>{item.creator.slice(5)}</td>
+                <td>{item.user_name}</td>
                 <td></td>
                 <td>
                   <button
