@@ -229,6 +229,8 @@ const QuestionsTable = () => {
     }, {});
 
     setAllData(sortedGroupedData);
+    // temporarily set as sorted; will figure out how to reset
+    setOriginalData(sortedGroupedData);
   };
 
   // filter functions for AI
