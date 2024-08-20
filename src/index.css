@@ -185,5 +185,18 @@
     text-align: center;
   }
   
+  .creation-date-header {
+    background-color: #fdbfbf;
+  }
   
+  .number-of-answers-header {
+    background-color: #ecf07d;
+  }
+  .creation-date-cell {
+    background-color: #fbe1e1;
+  }
+  
+  .number-of-answers-cell {
+    background-color: #f2f3d6;
+  }
 }

@@ -10,10 +10,10 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const hardcodedUsername = "admin";
-    const hardcodedPassword = "password123";
+    const mainUsername = "admin";
+    const mainPassword = "password123";
 
-    if (username === hardcodedUsername && password === hardcodedPassword) {
+    if (username === mainUsername && password === mainPassword) {
       login();
       navigate("/edit");
     } else {
