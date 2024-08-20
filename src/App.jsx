@@ -87,6 +87,7 @@ export default function App() {
                   </PrivateRoute>
                 }
               />
+
               <Route path="/confirm" element={<ConfirmEmailPage />} />
               <Route path="/oauth-callback" element={<OAuthCallback />} />
               <Route path="/collect-name" element={<CollectNamePage />} />

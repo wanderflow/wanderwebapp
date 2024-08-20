@@ -233,6 +233,43 @@ const QuestionsTable = () => {
     setOriginalData(sortedGroupedData);
   };
 
+  // sort by time
+  const handleSortByTimeCreated = () => {
+    const direction =
+      sortConfig.key === "creationDate" && sortConfig.direction === "asc"
+        ? "desc"
+        : "asc";
+
+    setSortConfig({ key: "creationDate", direction });
+
+    const sortedData = Object.entries(allData).sort((a, b) => {
+      // Get the main question creation dates
+      const questionDateA = a[1][0].SK_y;
+      const questionDateB = b[1][0].SK_y;
+
+      // If sorting by questions first
+      if (questionDateA < questionDateB) return direction === "asc" ? -1 : 1;
+      if (questionDateA > questionDateB) return direction === "asc" ? 1 : -1;
+
+      // If question creation dates are the same, sort by answer creation date in PK_x
+      const answerDateA = Math.max(...a[1].map((q) => q.created_at));
+      const answerDateB = Math.max(...b[1].map((q) => q.created_at));
+
+      if (answerDateA < answerDateB) return direction === "asc" ? -1 : 1;
+      if (answerDateA > answerDateB) return direction === "asc" ? 1 : -1;
+
+      return 0;
+    });
+
+    sortedData.forEach(([key, questions]) => {
+      questions.sort((a, b) => b.created_at - a.created_at);
+    });
+
+    setAllData(Object.fromEntries(sortedData));
+    // temporarily set as sorted; will figure out how to reset
+    setOriginalData(Object.fromEntries(sortedData));
+  };
+
   // filter functions for AI
   const filteredData = Object.keys(allData).reduce((result, key) => {
     let filteredItems;
@@ -255,7 +292,7 @@ const QuestionsTable = () => {
         className="search-container"
         style={{ display: "flex", alignItems: "center", gap: "20px" }}
       >
-        <h1 className="title">Wander Internal Tool</h1>
+        <h1 className="title">Wander Internal Tool - Full Database</h1>
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"
@@ -334,13 +371,23 @@ const QuestionsTable = () => {
       <table>
         <thead>
           <tr>
-            <th>Question Creation Date & Time</th>
+            <th
+              className="creation-date-header"
+              onClick={handleSortByTimeCreated}
+            >
+              Question Creation Date & Time{" "}
+              {sortConfig.key === "creationDate" &&
+                (sortConfig.direction === "asc" ? "⇑" : "⇓")}
+            </th>
             <th>Tags</th>
             <th>Express Question</th>
-            <th onClick={() => handleSort("numberOfAnswers")}>
-              # of Answers{" "}
+            <th
+              className="number-of-answers-header"
+              onClick={() => handleSort("numberOfAnswers")}
+            >
+              Number of Answers{" "}
               {sortConfig.key === "numberOfAnswers" &&
-                (sortConfig.direction === "asc" ? "🔼" : "🔽")}
+                (sortConfig.direction === "asc" ? "⇑" : "⇓")}
             </th>
             <th>Created By AI?</th>
             <th>Edit/ Delete</th>
@@ -356,7 +403,10 @@ const QuestionsTable = () => {
             filteredData[question].map((item, itemIndex) => (
               <tr key={itemIndex}>
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td
+                    className="creation-date-cell"
+                    rowSpan={allData[question].length}
+                  >
                     {moment.unix(item.SK_y).format("MMMM Do YYYY, h:mm:ss a")}
                   </td>
                 )}
@@ -399,7 +449,10 @@ const QuestionsTable = () => {
                   </td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td
+                    className="number-of-answers-cell"
+                    rowSpan={allData[question].length}
+                  >
                     {allData[question].length}
                   </td>
                 )}
