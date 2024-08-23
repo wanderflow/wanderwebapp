@@ -16,6 +16,8 @@ import {
   CollectNamePage,
   Login,
   Home,
+  EulaPage,
+  PrivacyPage
 } from "./pages";
 import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
@@ -74,6 +76,8 @@ export default function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/privacy_policy" element={<PrivacyPage />} />
+              <Route path="/eula" element={<EulaPage />} />
               <Route path="/inviteToGuess" element={<InviteToGuessPage />} />
               <Route path="/invite" element={<InvitePage />} />
               <Route path="/internal" element={<InternalToolsPage />} />
