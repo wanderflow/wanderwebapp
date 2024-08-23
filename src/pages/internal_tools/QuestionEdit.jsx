@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   expressionsExpress,
   deleteExpression,
@@ -13,6 +13,7 @@ import "moment/locale/en-gb";
 
 // calls all data
 const QuestionsTable = () => {
+  const [originalData, setOriginalData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(100);
@@ -26,6 +27,7 @@ const QuestionsTable = () => {
 
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [newExpressQuestion, setNewExpressQuestion] = useState("");
+  const textareaRef = useRef(null);
 
   const [sortConfig, setSortConfig] = useState({
     key: "numberOfAnswers",
@@ -47,6 +49,7 @@ const QuestionsTable = () => {
       }, {});
       if (!isSearching) {
         setAllData(grouped);
+        setOriginalData(grouped);
       }
       setLoading(false);
     } catch (error) {
@@ -56,7 +59,12 @@ const QuestionsTable = () => {
 
   useEffect(() => {
     getQuestions();
-  }, [pageNumber, pageSize, isSearching]);
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [pageNumber, pageSize, isSearching, newExpressQuestion]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -77,14 +85,16 @@ const QuestionsTable = () => {
 
   // search functions
   const handleSearch = async () => {
-    if (searchWord.trim() === "") {
+    console.log(searchWord);
+    if (searchWord.trim() === "" || searchWord === null) {
       setIsSearching(false);
+      setAllData(originalData);
       return;
     }
     setIsSearching(true);
     try {
       let response = await searchExpress({
-        search_word: searchWord,
+        search_word: searchWord.trim(),
         page: pageNumber,
         page_size: pageSize,
       });
@@ -219,6 +229,45 @@ const QuestionsTable = () => {
     }, {});
 
     setAllData(sortedGroupedData);
+    // temporarily set as sorted; will figure out how to reset
+    setOriginalData(sortedGroupedData);
+  };
+
+  // sort by time
+  const handleSortByTimeCreated = () => {
+    const direction =
+      sortConfig.key === "creationDate" && sortConfig.direction === "asc"
+        ? "desc"
+        : "asc";
+
+    setSortConfig({ key: "creationDate", direction });
+
+    const sortedData = Object.entries(allData).sort((a, b) => {
+      // Get the main question creation dates
+      const questionDateA = a[1][0].SK_y;
+      const questionDateB = b[1][0].SK_y;
+
+      // If sorting by questions first
+      if (questionDateA < questionDateB) return direction === "asc" ? -1 : 1;
+      if (questionDateA > questionDateB) return direction === "asc" ? 1 : -1;
+
+      // If question creation dates are the same, sort by answer creation date in PK_x
+      const answerDateA = Math.max(...a[1].map((q) => q.created_at));
+      const answerDateB = Math.max(...b[1].map((q) => q.created_at));
+
+      if (answerDateA < answerDateB) return direction === "asc" ? -1 : 1;
+      if (answerDateA > answerDateB) return direction === "asc" ? 1 : -1;
+
+      return 0;
+    });
+
+    sortedData.forEach(([key, questions]) => {
+      questions.sort((a, b) => b.created_at - a.created_at);
+    });
+
+    setAllData(Object.fromEntries(sortedData));
+    // temporarily set as sorted; will figure out how to reset
+    setOriginalData(Object.fromEntries(sortedData));
   };
 
   // filter functions for AI
@@ -227,7 +276,7 @@ const QuestionsTable = () => {
     if (filterType === "AI") {
       filteredItems = allData[key].filter((item) => item.type === "AI");
     } else if (filterType === "NON_AI") {
-      filteredItems = allData[key].filter((item) => item.type !== "AI");
+      filteredItems = allData[key].filter((item) => item.type === null);
     } else {
       filteredItems = allData[key];
     }
@@ -243,7 +292,7 @@ const QuestionsTable = () => {
         className="search-container"
         style={{ display: "flex", alignItems: "center", gap: "20px" }}
       >
-        <h1 className="title">Wander Internal Tool</h1>
+        <h1 className="title">Wander Internal Tool - Full Database</h1>
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         <input
           type="text"
@@ -322,13 +371,23 @@ const QuestionsTable = () => {
       <table>
         <thead>
           <tr>
-            <th>Question Creation Date & Time</th>
+            <th
+              className="creation-date-header"
+              onClick={handleSortByTimeCreated}
+            >
+              Question Creation Date & Time{" "}
+              {sortConfig.key === "creationDate" &&
+                (sortConfig.direction === "asc" ? "⇑" : "⇓")}
+            </th>
             <th>Tags</th>
             <th>Express Question</th>
-            <th onClick={() => handleSort("numberOfAnswers")}>
-              # of Answers{" "}
+            <th
+              className="number-of-answers-header"
+              onClick={() => handleSort("numberOfAnswers")}
+            >
+              Number of Answers{" "}
               {sortConfig.key === "numberOfAnswers" &&
-                (sortConfig.direction === "asc" ? "🔼" : "🔽")}
+                (sortConfig.direction === "asc" ? "⇑" : "⇓")}
             </th>
             <th>Created By AI?</th>
             <th>Edit/ Delete</th>
@@ -344,7 +403,10 @@ const QuestionsTable = () => {
             filteredData[question].map((item, itemIndex) => (
               <tr key={itemIndex}>
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td
+                    className="creation-date-cell"
+                    rowSpan={allData[question].length}
+                  >
                     {moment.unix(item.SK_y).format("MMMM Do YYYY, h:mm:ss a")}
                   </td>
                 )}
@@ -357,8 +419,8 @@ const QuestionsTable = () => {
                     editingQuestion.express_pk === item.express_pk &&
                     editingQuestion.express_sk === item.SK_y ? (
                       <>
-                        <input
-                          type="text"
+                        <textarea
+                          className="editTextBox"
                           value={newExpressQuestion}
                           onChange={(e) =>
                             setNewExpressQuestion(e.target.value)
@@ -387,7 +449,10 @@ const QuestionsTable = () => {
                   </td>
                 )}
                 {itemIndex === 0 && (
-                  <td rowSpan={allData[question].length}>
+                  <td
+                    className="number-of-answers-cell"
+                    rowSpan={allData[question].length}
+                  >
                     {allData[question].length}
                   </td>
                 )}
@@ -427,7 +492,7 @@ const QuestionsTable = () => {
                     .format("MMMM Do YYYY, h:mm:ss a")}
                 </td>
                 <td>{item.expression_answer}</td>
-                <td>{item.creator.slice(5)}</td>
+                <td>{item.user_name}</td>
                 <td></td>
                 <td>
                   <button

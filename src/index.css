@@ -136,6 +136,7 @@
     font-style: italic;
     color: grey;
   }
+  
 
   .action-buttons {
     gap: 5px;
@@ -146,6 +147,16 @@
     color: black;
     border: none;
     padding: 5px 10px;
+  }
+  
+  .editTextBox {
+    width: 100%;
+    height: 100px;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
   }
   
   .deleteButton {
@@ -174,6 +185,20 @@
     text-align: center;
   }
   
+  .creation-date-header {
+    background-color: #fdbfbf;
+  }
+  
+  .number-of-answers-header {
+    background-color: #ecf07d;
+  }
+  .creation-date-cell {
+    background-color: #fbe1e1;
+  }
+  
+  .number-of-answers-cell {
+    background-color: #f2f3d6;
+  }
   .eula {
     text-align: center;
   }
