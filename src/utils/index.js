@@ -31,3 +31,4 @@ export const download1Image = download1;
 export const download2Image = download2;
 export const eyeImage = eye;
 export const eyeImage2 = eyes;
+// export const internalBg;
