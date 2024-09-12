@@ -394,7 +394,9 @@ const QuestionsTable = () => {
             <th>Answer Creation Date & Time</th>
             <th>Expression Answers</th>
             <th>User</th>
-            <th>Reported?</th>
+            <th>Tag</th>
+            <th>FirstName</th>
+            <th>College</th>
             <th>Delete</th>
           </tr>
         </thead>
@@ -493,7 +495,9 @@ const QuestionsTable = () => {
                 </td>
                 <td>{item.expression_answer}</td>
                 <td>{item.user_name}</td>
-                <td></td>
+                <td>{item.tag}</td>
+                <td>{item.firstName}</td>
+                <td>{item.college}</td>
                 <td>
                   <button
                     className="deleteButton"
