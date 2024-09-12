@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import internalBg from "@/assets/images/internalBg.jpg";
+import { notification } from "antd";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +17,11 @@ const Login = () => {
       login();
       navigate("/edit");
     } else {
-      alert("Invalid username or password");
+      // alert("Invalid username or password");
+      notification.error({
+        message: "Error",
+        description: "Invalid username or password",
+      });
     }
   };
 

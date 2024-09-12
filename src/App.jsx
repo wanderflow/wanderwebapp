@@ -17,12 +17,13 @@ import {
   Login,
   Home,
   EulaPage,
-  PrivacyPage
+  PrivacyPage,
 } from "./pages";
 import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import { AuthProvider } from "./pages/AuthContext";
 import PrivateRoute from "./pages/internal_tools/PrivateRoute";
+import NewQuestion from "./pages/internal_tools/NewQuestion";
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
@@ -89,6 +90,14 @@ export default function App() {
                   <PrivateRoute>
                     <QuestionEdit />
                   </PrivateRoute>
+                }
+              />
+              <Route
+                path="/newQuestion"
+                element={
+                  // <PrivateRoute>
+                  <NewQuestion />
+                  // </PrivateRoute>
                 }
               />
 

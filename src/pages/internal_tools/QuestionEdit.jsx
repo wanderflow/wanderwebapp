@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import "moment/locale/en-gb";
-
+import { useNavigate } from "react-router-dom";
 // calls all data
 const QuestionsTable = () => {
   const [originalData, setOriginalData] = useState([]);
@@ -66,9 +66,7 @@ const QuestionsTable = () => {
     }
   }, [pageNumber, pageSize, isSearching, newExpressQuestion]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const navigate = useNavigate();
 
   // enter page number and size
   const handlePageNumberChange = (event) => {
@@ -285,6 +283,9 @@ const QuestionsTable = () => {
     }
     return result;
   }, {});
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="internal-container">
@@ -300,8 +301,15 @@ const QuestionsTable = () => {
           onChange={(e) => setSearchWord(e.target.value)}
           placeholder="Search..."
         />
-        <div style={{ width: "10%", display: "flex", gap: "5px" }}>
+        <div style={{ width: "20%", display: "flex", gap: "5px" }}>
           <button onClick={handleSearch}>Search</button>
+          <button
+            onClick={() => {
+              navigate("/newQuestion");
+            }}
+          >
+            Create
+          </button>
         </div>
         <form
           style={{

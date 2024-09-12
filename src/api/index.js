@@ -12,33 +12,29 @@ export const createInviteUserRelation = (param) =>
     param
   );
 
-  export const expressionsExpress = (param) =>
+export const expressionsExpress = (param) =>
   request.post(
     import.meta.env.VITE_EXPRESS_BACKEND + "/get_all_expressions",
     param
   );
 
-  export const deleteExpression = (param) =>
+export const deleteExpression = (param) =>
   request.post(
     import.meta.env.VITE_EXPRESS_BACKEND + "/delete_expressions",
     param
   );
 
-  export const deleteExpress = (param) =>
-  request.post(
-    import.meta.env.VITE_EXPRESS_BACKEND + "/delete_express",
-    param
-  );
+export const deleteExpress = (param) =>
+  request.post(import.meta.env.VITE_EXPRESS_BACKEND + "/delete_express", param);
 
-  export const editExpress = (param) =>
-  request.post(
-    import.meta.env.VITE_EXPRESS_BACKEND + "/update_express",
-    param,
+export const editExpress = (param) =>
+  request.post(import.meta.env.VITE_EXPRESS_BACKEND + "/update_express", param);
 
-  );
+export const searchExpress = (param) =>
+  request.post(import.meta.env.VITE_EXPRESS_BACKEND + "/search_express", param);
 
-  export const searchExpress = (param) =>
+export const createExpress = (param) =>
   request.post(
-    import.meta.env.VITE_EXPRESS_BACKEND + "/search_express",
+    import.meta.env.VITE_EXPRESS_BACKEND + "/create_express_question",
     param
   );
