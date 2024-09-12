@@ -5,6 +5,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { IconContext } from "react-icons";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import {
   SignUp,
   ConfirmEmailPage,
@@ -21,6 +23,9 @@ import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import { AuthProvider } from "./pages/AuthContext";
 import PrivateRoute from "./pages/internal_tools/PrivateRoute";
+import QuestionList from "./pages/internal_tools/question/QuestionList";
+import InternalIndex from "./pages/internal_tools";
+const queryClient = new QueryClient();
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
@@ -69,34 +74,38 @@ const SignOut = () => {
 export default function App() {
   return (
     <div className="min-h-screen w-full">
-      <IconContext.Provider value={{ color: "#8391A1", size: 24 }}>
-        <AuthProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/inviteToGuess" element={<InviteToGuessPage />} />
-              <Route path="/invite" element={<InvitePage />} />
-              <Route path="/internal" element={<InternalToolsPage />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/edit"
-                element={
-                  <PrivateRoute>
-                    <QuestionEdit />
-                  </PrivateRoute>
-                }
-              />
+      <QueryClientProvider client={queryClient}>
+        <IconContext.Provider value={{ color: "#8391A1", size: 24 }}>
+          <AuthProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/inviteToGuess" element={<InviteToGuessPage />} />
+                <Route path="/invite" element={<InvitePage />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/edit"
+                  element={
+                    <PrivateRoute>
+                      <QuestionEdit />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="/internal" element={<InternalIndex />}>
+                  <Route path="express" element={<QuestionList />} index />
+                </Route>
 
-              <Route path="/confirm" element={<ConfirmEmailPage />} />
-              <Route path="/oauth-callback" element={<OAuthCallback />} />
-              <Route path="/collect-name" element={<CollectNamePage />} />
-              <Route path="/download" element={<DownloadPage />} />
-              <Route path="/signout" element={<SignOut />} />
-            </Routes>
-          </Router>
-        </AuthProvider>
-      </IconContext.Provider>
+                <Route path="/confirm" element={<ConfirmEmailPage />} />
+                <Route path="/oauth-callback" element={<OAuthCallback />} />
+                <Route path="/collect-name" element={<CollectNamePage />} />
+                <Route path="/download" element={<DownloadPage />} />
+                <Route path="/signout" element={<SignOut />} />
+              </Routes>
+            </Router>
+          </AuthProvider>
+        </IconContext.Provider>
+      </QueryClientProvider>
     </div>
   );
 }
