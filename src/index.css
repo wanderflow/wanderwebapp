@@ -21,7 +21,7 @@
   }
 
   main {
-    @apply mx-auto max-w-md xl:max-w-xl min-h-screen ;
+    @apply mx-auto max-w-md xl:max-w-xl min-h-screen;
   }
 
   a {
@@ -29,7 +29,7 @@
   }
 
   button {
-    @apply bg-purple text-white w-full px-4 py-2 rounded-3xl text-lg font-magra font-semibold;
+    @apply bg-purple text-white px-4 py-2 rounded-3xl text-lg font-magra font-semibold;
   }
 
   p {
@@ -39,8 +39,6 @@
   h5 {
     @apply font-sans font-normal text-xs text-gray-100;
   }
-  
-
 }
 
 @layer utilities {
@@ -57,26 +55,26 @@
   }
 
   .input-field {
-    @apply bg-white text-base p-4 rounded-[8px] w-full border
+    @apply bg-white text-base p-4 rounded-[8px] w-full border;
   }
 
   .error-text {
-    @apply absolute text-red font-normal text-sm -bottom-5 pl-1
+    @apply absolute text-red font-normal text-sm -bottom-5 pl-1;
   }
 
   input {
-    @apply text-base rounded-[8px] border
+    @apply text-base rounded-[8px] border;
   }
 
   .fixed-container {
     position: fixed;
     top: 60%;
     width: 100%;
-    max-width: 400px; 
+    max-width: 400px;
   }
-  
+
   .home-p {
-    @apply font-light text-sm md:font-semibold md:text-base
+    @apply font-light text-sm md:font-semibold md:text-base;
   }
 
   .title {
@@ -85,7 +83,6 @@
   }
 
   .internal-container {
-    
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -104,30 +101,31 @@
     z-index: 1;
     width: 100%;
   }
-  
+
   .search-icon {
     margin-right: 10px;
     margin-right: 10px;
   }
-  
+
   .table-container {
     width: 100%;
     overflow-x: auto;
     margin-top: 20px;
   }
-  
+
   table {
     width: 100%;
     border-collapse: collapse;
   }
-  
-  th, td {
+
+  th,
+  td {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
     width: px;
   }
-  
+
   th {
     background-color: #f2f2f2;
   }
@@ -136,19 +134,18 @@
     font-style: italic;
     color: grey;
   }
-  
 
   .action-buttons {
     gap: 5px;
   }
-  
+
   .editButton {
     background-color: lightgray;
     color: black;
     border: none;
     padding: 5px 10px;
   }
-  
+
   .editTextBox {
     width: 100%;
     height: 100px;
@@ -158,14 +155,14 @@
     border-radius: 4px;
     resize: vertical;
   }
-  
+
   .deleteButton {
     background-color: crimson;
     color: white;
     border: none;
     padding: 5px 10px;
   }
-  
+
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -177,25 +174,25 @@
     justify-content: center;
     align-items: center;
   }
-  
+
   .modal-content {
     background: white;
     padding: 20px;
     border-radius: 5px;
     text-align: center;
   }
-  
+
   .creation-date-header {
     background-color: #fdbfbf;
   }
-  
+
   .number-of-answers-header {
     background-color: #ecf07d;
   }
   .creation-date-cell {
     background-color: #fbe1e1;
   }
-  
+
   .number-of-answers-cell {
     background-color: #f2f3d6;
   }

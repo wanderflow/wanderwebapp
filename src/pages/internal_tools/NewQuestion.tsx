@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, notification } from "antd";
+import { Form, Input, Button, notification, Switch } from "antd";
 import { createExpress } from "@/api";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +12,10 @@ const NewQuestion = () => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
-      const res = await createExpress(values);
+      const res = await createExpress({
+        ...values,
+        add_to_today_list: values.add_to_today_list ? 1 : 0,
+      });
       notification.success({
         message: "Success",
         description: "Success",
@@ -30,6 +33,7 @@ const NewQuestion = () => {
   return (
     <Form
       form={form}
+      initialValues={{ add_to_today_list: false }}
       layout="vertical"
       onFinish={handleSubmit}
       className="w-1/3 m-auto mt-20"
@@ -56,6 +60,9 @@ const NewQuestion = () => {
         rules={[{ required: true, message: "Please input the type" }]}
       >
         <Input />
+      </Form.Item>
+      <Form.Item name="add_to_today_list" label="Add to today's list">
+        <Switch />
       </Form.Item>
 
       <Form.Item>
