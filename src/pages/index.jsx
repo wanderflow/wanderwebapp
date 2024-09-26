@@ -8,6 +8,8 @@ import CollectNamePage from "./CollectNamePage";
 import Login from "./internal_tools/Login";
 import Home from "./Home";
 import QuestionEdit from "./internal_tools/QuestionEdit";
+import EulaPage from "./EulaPage";
+import PrivacyPage from "./PrivacyPage";
 
 export {
   SignUp,
@@ -20,4 +22,6 @@ export {
   Login,
   Home,
   QuestionEdit,
+  EulaPage,
+  PrivacyPage
 };

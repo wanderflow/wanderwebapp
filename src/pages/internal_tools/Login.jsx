@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import internalBg from "@/assets/images/internalBg.jpg";
+import logo from "@/assets/images/logo.png";
+import { notification } from "antd";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +18,11 @@ const Login = () => {
       login();
       navigate("/edit");
     } else {
-      alert("Invalid username or password");
+      // alert("Invalid username or password");
+      notification.error({
+        message: "Error",
+        description: "Invalid username or password",
+      });
     }
   };
 
@@ -25,13 +31,10 @@ const Login = () => {
       className="flex justify-center items-center min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${internalBg})` }} // Set the background image here
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-8">Login</h2>
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md z-10">
+        <img src={logo} alt="" className="w-20 m-auto mb-8" />
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Username
-            </label>
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -41,9 +44,6 @@ const Login = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
-              Password
-            </label>
             <input
               type="password"
               value={password}

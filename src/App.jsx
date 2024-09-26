@@ -18,6 +18,8 @@ import {
   CollectNamePage,
   Login,
   Home,
+  EulaPage,
+  PrivacyPage,
 } from "./pages";
 import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
@@ -26,6 +28,7 @@ import PrivateRoute from "./pages/internal_tools/PrivateRoute";
 import QuestionList from "./pages/internal_tools/question/QuestionList";
 import InternalIndex from "./pages/internal_tools";
 const queryClient = new QueryClient();
+import NewQuestion from "./pages/internal_tools/NewQuestion";
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
@@ -92,6 +95,7 @@ export default function App() {
                     </PrivateRoute>
                   }
                 />
+                <Route path="/newQuestion" element={<NewQuestion />} />
                 <Route path="/internal" element={<InternalIndex />}>
                   <Route path="express" element={<QuestionList />} index />
                 </Route>
