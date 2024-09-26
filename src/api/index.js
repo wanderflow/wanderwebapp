@@ -17,6 +17,18 @@ export const expressionsExpress = (param) =>
     import.meta.env.VITE_EXPRESS_BACKEND + "/get_all_expressions",
     param
   );
+export const expressList = (param) =>
+  request.get(import.meta.env.VITE_EXPRESS_BACKEND + "/get_all_express", param);
+export const dailyExpressList = (param) =>
+  request.get(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/get_today_question_list",
+    param
+  );
+export const updateDailyList = (param) =>
+  request.post(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/update_today_question_list",
+    param
+  );
 
 export const deleteExpression = (param) =>
   request.post(

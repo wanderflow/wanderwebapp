@@ -3,6 +3,7 @@ import {
   Route,
   Routes,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 import { IconContext } from "react-icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -25,10 +26,13 @@ import { useUser, useClerk, useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import { AuthProvider } from "./pages/AuthContext";
 import PrivateRoute from "./pages/internal_tools/PrivateRoute";
-import QuestionList from "./pages/internal_tools/question/QuestionList";
+import QuestionList from "./pages/internal_tools/expression/ExpressionList";
 import InternalIndex from "./pages/internal_tools";
 const queryClient = new QueryClient();
-import NewQuestion from "./pages/internal_tools/NewQuestion";
+import NewQuestion from "./pages/internal_tools/express/NewExpress";
+import ExpressList from "./pages/internal_tools/express/ExpressList";
+import EditExpress from "./pages/internal_tools/express/EditExpress";
+import DailyExpressList from "./pages/internal_tools/express/DailyExpressList";
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
@@ -87,17 +91,18 @@ export default function App() {
                 <Route path="/invite" element={<InvitePage />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/login" element={<Login />} />
-                <Route
-                  path="/edit"
-                  element={
-                    <PrivateRoute>
-                      <QuestionEdit />
-                    </PrivateRoute>
-                  }
-                />
-                <Route path="/newQuestion" element={<NewQuestion />} />
                 <Route path="/internal" element={<InternalIndex />}>
-                  <Route path="express" element={<QuestionList />} index />
+                  <Route path="expression" element={<QuestionList />} />
+                  <Route path="editExpress" element={<EditExpress />} />
+                  <Route path="express" element={<ExpressList />} />
+                  <Route path="dailyExpress" element={<DailyExpressList />} />
+                  <Route path="newExpress" element={<NewQuestion />} />
+                  <Route path="oldPage" element={<QuestionEdit />} />
+                  <Route index element={<Navigate to="/internal/express" />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to="/internal/express" />}
+                  />
                 </Route>
 
                 <Route path="/confirm" element={<ConfirmEmailPage />} />

@@ -305,7 +305,7 @@ const QuestionsTable = () => {
           <button onClick={handleSearch}>Search</button>
           <button
             onClick={() => {
-              navigate("/newQuestion");
+              navigate("/internal/newExpress");
             }}
           >
             Create

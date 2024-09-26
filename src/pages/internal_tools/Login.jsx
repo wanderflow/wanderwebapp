@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import internalBg from "@/assets/images/internalBg.jpg";
@@ -7,7 +7,7 @@ import { notification } from "antd";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ const Login = () => {
 
     if (email === mainUsername && password === mainPassword) {
       login();
-      navigate("/edit");
+      navigate("/internal/express");
     } else {
       // alert("Invalid username or password");
       notification.error({
@@ -25,6 +25,11 @@ const Login = () => {
       });
     }
   };
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/internal/express");
+    }
+  }, []);
 
   return (
     <div
