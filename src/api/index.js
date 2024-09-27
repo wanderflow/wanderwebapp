@@ -29,6 +29,11 @@ export const updateDailyList = (param) =>
     import.meta.env.VITE_EXPRESS_BACKEND + "/update_today_question_list",
     param
   );
+export const updateCollegeDailyList = (param) =>
+  request.post(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/update_college_question_list",
+    param
+  );
 
 export const deleteExpression = (param) =>
   request.post(
@@ -48,5 +53,11 @@ export const searchExpress = (param) =>
 export const createExpress = (param) =>
   request.post(
     import.meta.env.VITE_EXPRESS_BACKEND + "/create_express_question",
+    param
+  );
+
+export const getCollegeList = (param) =>
+  request.get(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/get_today_college_list",
     param
   );

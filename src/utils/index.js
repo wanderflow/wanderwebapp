@@ -14,6 +14,7 @@ import download1 from "@/assets/images/landing/download.png";
 import download2 from "@/assets/images/landing/download_inverted.png";
 import eye from "@/assets/images/landing/eye.png";
 import eyes from "@/assets/images/landing/eyes.png";
+import dayjs from "dayjs";
 
 export const appleSvg = apple;
 export const googleSvg = google;
@@ -32,3 +33,6 @@ export const download2Image = download2;
 export const eyeImage = eye;
 export const eyeImage2 = eyes;
 // export const internalBg;
+export const timeFormat = (time) => {
+  return dayjs(time).format("YYYY-MM-DD HH:mm:ss");
+};
