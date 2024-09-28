@@ -1,14 +1,33 @@
-import React, { useState } from "react";
-import { Form, Input, Button, notification, Switch } from "antd";
-import { createExpress } from "@/api";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, notification, Switch, Select } from "antd";
+import { createExpress, getCollegeList } from "@/api";
 import { useNavigate } from "react-router-dom";
 
 const NewQuestion = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [typeOptions, setTypeOptions] = useState([
+    {
+      value: "General",
+      label: "General",
+    },
+  ]);
 
   const [loading, setLoading] = useState(false);
-
+  const init = async () => {
+    const data: any = await getCollegeList();
+    setTypeOptions((state) => {
+      return state.concat(
+        data.map(({ SK }: any) => ({
+          value: SK.slice(1),
+          label: SK.slice(1),
+        }))
+      );
+    });
+  };
+  useEffect(() => {
+    init();
+  }, []);
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
@@ -34,7 +53,11 @@ const NewQuestion = () => {
   return (
     <Form
       form={form}
-      initialValues={{ add_to_today_list: false, add_to_college_list: false }}
+      initialValues={{
+        add_to_today_list: false,
+        add_to_college_list: false,
+        type: "General",
+      }}
       layout="vertical"
       onFinish={handleSubmit}
       className="w-1/3 m-auto mt-20"
@@ -60,12 +83,16 @@ const NewQuestion = () => {
         label="Type"
         rules={[{ required: true, message: "Please input the type" }]}
       >
-        <Input />
+        <Select
+          // defaultValue="lucy"
+          // style={{ width: 120 }}
+          options={typeOptions}
+        />
       </Form.Item>
       <Form.Item name="add_to_today_list" label="Add to today's list">
         <Switch />
       </Form.Item>
-      <Form.Item name="add_to_college_list" label="Add to college list">
+      <Form.Item name="add_to_college_list" label="Add to today's college list">
         <Switch />
       </Form.Item>
 

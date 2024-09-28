@@ -61,3 +61,8 @@ export const getCollegeList = (param) =>
     import.meta.env.VITE_EXPRESS_BACKEND + "/get_today_college_list",
     param
   );
+export const getUserExpress = (params) =>
+  request.get(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/get_user_create_question_list",
+    param
+  );

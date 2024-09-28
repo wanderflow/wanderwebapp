@@ -11,13 +11,11 @@ if (import.meta.env.MODE === "development") {
 if (!CLERK_PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");
 }
-console.log(import.meta.env.VITE_VERSION_MARK, CLERK_PUBLISHABLE_KEY)
+console.log(import.meta.env.VITE_VERSION_MARK, CLERK_PUBLISHABLE_KEY);
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
-      <ClerkLoaded>
-        <App />
-      </ClerkLoaded>
-    </ClerkProvider>
-  </React.StrictMode>
+  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+    <ClerkLoaded>
+      <App />
+    </ClerkLoaded>
+  </ClerkProvider>
 );

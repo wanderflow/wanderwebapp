@@ -9,7 +9,6 @@ import Highlighter from "react-highlight-words";
 import {
   dailyExpressList,
   deleteExpress,
-  expressionsExpress,
   expressList,
   getCollegeList,
   updateCollegeDailyList,
@@ -23,8 +22,11 @@ import {
 import { timeFormat } from "@/utils";
 
 const fetchData: any = async (params: any) => {
-  const response = await expressList(params);
-  return response;
+  const response: any = await expressList(params);
+  return response.map((m: any) => ({
+    ...m,
+    isUserQuestion: m.PK.startsWith("user_express#"),
+  }));
 };
 
 const ExpressList = () => {
@@ -115,6 +117,29 @@ const ExpressList = () => {
           );
         }
         return text;
+      },
+    },
+    {
+      title: "Asked by user",
+      dataIndex: "isUserQuestion",
+      key: "isUserQuestion",
+      filters: [
+        {
+          text: "YES",
+          value: true,
+        },
+        {
+          text: "NO",
+          value: false,
+        },
+      ],
+      render: (text?: string) => (
+        <div className={text ? "text-sky-500" : "text-rose-500"}>
+          {text ? "YES" : "NO"}
+        </div>
+      ),
+      onFilter: (value: any, record: any) => {
+        return record.isUserQuestion === value;
       },
     },
     {
