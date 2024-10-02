@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Modal, notification } from "antd";
+import { Table, Button, Modal, notification, Input } from "antd";
 import { useQuery } from "@tanstack/react-query";
 // import axios from "axios";
 import { deleteExpression, expressionsExpress } from "@/api";
@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const fetchData: any = async (params: any) => {
+  console.log(params);
   const response = await expressionsExpress(params);
   console.log(response);
   return response;
@@ -18,18 +19,35 @@ const ExpressionTable = () => {
   // Initialize page and pageSize from URL or default to 1 and 5
   const initialPage = parseInt(searchParams.get("page") || "1");
   const initialPageSize = parseInt(searchParams.get("page_size") || "10");
-
+  const initialSearchWord = searchParams.get("search_word") || "";
+  // alert(initialSearchWord);
   const [page, setPage] = useState(initialPage);
   const [page_size, setPageSize] = useState(initialPageSize);
+  const [search_word, setSearchword] = useState(initialSearchWord);
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["expressions", { page, page_size }],
-    queryFn: () => fetchData({ page, page_size }),
+    queryKey: ["expressions", { page, page_size, search_word }],
+    queryFn: () => fetchData({ page, page_size, search_word }),
   });
   useEffect(() => {
     // Update URL search params when page or pageSize changes
-    setSearchParams({ page: `${page}`, page_size: `${page_size}` });
-  }, [page, page_size, setSearchParams]);
-  if (error) return <p>Error fetching data</p>;
+    setSearchParams({
+      page: `${page}`,
+      page_size: `${page_size}`,
+      search_word,
+    });
+  }, [page, page_size, setSearchParams, search_word]);
+  // useEffect(() => {
+  //   alert(initialSearchWord);
+  // }, []);
+  // if (error) return <p>Error fetching data</p>;
+  useEffect(() => {
+    if (error) {
+      notification.error({
+        description: (error as any).msg,
+        message: "Failed",
+      });
+    }
+  }, [error]);
 
   const columns = [
     {
@@ -133,6 +151,18 @@ const ExpressionTable = () => {
 
   return (
     <div>
+      <div className="flex mb-4 justify-between">
+        <div className="w-1/5">
+          <Input
+            placeholder="Search for question"
+            value={search_word}
+            onChange={(e) => {
+              setSearchword(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+      </div>
       <Table
         columns={columns}
         loading={isLoading}
