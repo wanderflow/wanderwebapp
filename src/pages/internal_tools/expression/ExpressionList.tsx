@@ -20,26 +20,38 @@ const ExpressionTable = () => {
   const initialPage = parseInt(searchParams.get("page") || "1");
   const initialPageSize = parseInt(searchParams.get("page_size") || "10");
   const initialSearchWord = searchParams.get("search_word") || "";
+  const initExpressPK = searchParams.get("express_pk") || "";
   // alert(initialSearchWord);
   const [page, setPage] = useState(initialPage);
   const [page_size, setPageSize] = useState(initialPageSize);
   const [search_word, setSearchword] = useState(initialSearchWord);
+  const [express_pk, setExpressPk] = useState(initExpressPK);
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["expressions", { page, page_size, search_word }],
-    queryFn: () => fetchData({ page, page_size, search_word }),
+    queryKey: ["expressions", { page, page_size, search_word, express_pk }],
+    queryFn: () => fetchData({ page, page_size, search_word, express_pk }),
   });
   useEffect(() => {
-    // Update URL search params when page or pageSize changes
-    setSearchParams({
-      page: `${page}`,
-      page_size: `${page_size}`,
-      search_word,
-    });
-  }, [page, page_size, setSearchParams, search_word]);
+    setSearchParams(
+      (searchParams) => {
+        searchParams.set("page", `${page}`);
+        searchParams.set("page_size", `${page_size}`);
+        searchParams.set("search_word", `${search_word}`);
+        return searchParams;
+      },
+      { replace: true }
+    );
+  }, [page, page_size, search_word]);
   // useEffect(() => {
-  //   alert(initialSearchWord);
-  // }, []);
-  // if (error) return <p>Error fetching data</p>;
+  //   // Update URL search params when page or pageSize changes
+  //   setSearchParams(
+  //     {
+  //       page: `${page}`,
+  //       page_size: `${page_size}`,
+  //       search_word,
+  //     },
+  //     { replace: true }
+  //   );
+  // }, [page, page_size, search_word]);
   useEffect(() => {
     if (error) {
       notification.error({
@@ -167,7 +179,7 @@ const ExpressionTable = () => {
         columns={columns}
         loading={isLoading}
         dataSource={data?.data || []}
-        rowKey="PK_x"
+        // rowKey="PK_x"
         pagination={{
           current: page,
           pageSize: page_size,

@@ -56,13 +56,15 @@ const _DailyExpressList = ({ fetchData, onRemove, sourceData }: any) => {
     queryFn: () => fetchData({}),
   });
   useEffect(() => {
-    // Update URL search params when page or pageSize changes
-    setSearchParams((searchParams) => {
-      searchParams.set("page", `${page}`);
-      searchParams.set("page_size", `${page_size}`);
-      return searchParams;
-    });
-  }, [page, page_size, setSearchParams]);
+    setSearchParams(
+      (searchParams) => {
+        searchParams.set("page", `${page}`);
+        searchParams.set("page_size", `${page_size}`);
+        return searchParams;
+      },
+      { replace: true }
+    );
+  }, [page, page_size]);
   if (error) return <p>Error fetching data</p>;
   const dataSource = sourceData || data;
   const columns = [

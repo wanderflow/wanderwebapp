@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { Table, Button, Modal, notification, Input, Checkbox } from "antd";
 import { useQuery } from "@tanstack/react-query";
 // import axios from "axios";
+import { Tag } from "antd";
+
 import dayjs from "dayjs";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 
 import {
+  approveUserQuestion,
   dailyExpressList,
   deleteExpress,
   expressList,
@@ -16,11 +19,11 @@ import {
 } from "@/api";
 import {
   createSearchParams,
+  Link,
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
 import { timeFormat } from "@/utils";
-
 const fetchData: any = async (params: any) => {
   const response: any = await expressList(params);
   return response.map((m: any) => ({
@@ -38,11 +41,16 @@ const ExpressList = () => {
 
   const initialPage = parseInt(searchParams.get("page") || "1");
   const initialPageSize = parseInt(searchParams.get("page_size") || "10");
+  const initCat = searchParams.get("category");
   const [dailyLoading, setDailyLoading] = useState(true);
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const navigate = useNavigate();
   const [page, setPage] = useState(initialPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [category, setCategory] = useState(
+    // searchParams.get("category") == "unapproved" ? "" : "all"
+    initCat == "unapproved" ? initCat : "all"
+  );
   const [currentModalObj, setCurrentModalObj] = useState<{
     id: string;
     question: string;
@@ -59,9 +67,16 @@ const ExpressList = () => {
     queryFn: () => fetchData({}),
   });
   useEffect(() => {
-    // Update URL search params when page or pageSize changes
-    setSearchParams({ page: `${page}`, page_size: `${page_size}`, search });
-  }, [page, page_size, setSearchParams, search]);
+    setSearchParams(
+      {
+        page: `${page}`,
+        page_size: `${page_size}`,
+        search,
+        category,
+      },
+      { replace: true }
+    );
+  }, [page, page_size, search, category]);
   const fetchDailyExpress = async () => {
     try {
       const data: any = await dailyExpressList();
@@ -105,18 +120,24 @@ const ExpressList = () => {
       title: "Question",
       dataIndex: "express_question",
       key: "express_question",
-      render: (text: string) => {
+      render: (text: string, { PK }: any) => {
+        console.log(PK);
+        const link = `/internal/expression?express_pk=${encodeURIComponent(
+          PK
+        )}`;
         if (search) {
           return (
-            <Highlighter
-              highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-              searchWords={[search]}
-              autoEscape
-              textToHighlight={text ? text.toString() : ""}
-            />
+            <Link to={link}>
+              <Highlighter
+                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+                searchWords={[search]}
+                autoEscape
+                textToHighlight={text ? text.toString() : ""}
+              />
+            </Link>
           );
         }
-        return text;
+        return <Link to={link}>{text}</Link>;
       },
     },
     {
@@ -210,53 +231,22 @@ const ExpressList = () => {
       title: "Actions",
       dataIndex: "action",
       key: "action",
-      render: (text: string, { PK, SK, express_question }: any) => (
-        <div className="flex">
-          <Button
-            size="small"
-            type="link"
-            onClick={() => {
-              navigate({
-                pathname: "/internal/editExpress",
-                search: `?${createSearchParams({
-                  express_pk: PK,
-                  express_sk: SK,
-                  new_express: express_question,
-                })}`,
-              });
-            }}
-          >
-            Edit
-          </Button>
-          {PK && (
-            <Button
-              size="small"
-              type="link"
-              onClick={async () => {
-                setIsModalOpen(true);
-                setCurrentModalObj({
-                  id: PK,
-                  question: express_question,
-                });
-              }}
-            >
-              Add to daily
-            </Button>
-          )}
-          <Button
-            size="small"
-            type="link"
-            danger
-            onClick={() => {
-              confirm({
-                title: `Do you want to delete this question?`,
-                icon: <ExclamationCircleFilled />,
-                content: express_question,
-                onOk: async () => {
+      render: (
+        text: string,
+        { PK, SK, express_question, is_approve, isUserQuestion }: any
+      ) => {
+        if (isUserQuestion) {
+          return (
+            is_approve == 0 && (
+              <Button
+                size="small"
+                type="link"
+                onClick={async () => {
                   try {
-                    const res = await deleteExpress({
+                    const res = await approveUserQuestion({
                       express_sk: SK,
                       express_pk: PK,
+                      is_approve: 1,
                     });
 
                     notification.success({
@@ -265,22 +255,92 @@ const ExpressList = () => {
                     });
                     refetch();
                   } catch (e) {
+                    console.log(e);
                     notification.warning({
                       message: "Failed",
                       description: (e as any).msg,
                     });
                   }
-                },
-                onCancel() {
-                  console.log("Cancel");
-                },
-              });
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      ),
+                }}
+              >
+                Approve
+              </Button>
+            )
+          );
+        }
+        return (
+          <div className="flex">
+            <Button
+              size="small"
+              type="link"
+              onClick={() => {
+                navigate({
+                  pathname: "/internal/editExpress",
+                  search: `?${createSearchParams({
+                    express_pk: PK,
+                    express_sk: SK,
+                    new_express: express_question,
+                  })}`,
+                });
+              }}
+            >
+              Edit
+            </Button>
+            {PK && (
+              <Button
+                size="small"
+                type="link"
+                onClick={async () => {
+                  setIsModalOpen(true);
+                  setCurrentModalObj({
+                    id: PK,
+                    question: express_question,
+                  });
+                }}
+              >
+                Add to daily
+              </Button>
+            )}
+
+            <Button
+              size="small"
+              type="link"
+              danger
+              onClick={() => {
+                confirm({
+                  title: `Do you want to delete this question?`,
+                  icon: <ExclamationCircleFilled />,
+                  content: express_question,
+                  onOk: async () => {
+                    try {
+                      const res = await deleteExpress({
+                        express_sk: SK,
+                        express_pk: PK,
+                      });
+
+                      notification.success({
+                        message: "Success",
+                        description: "Success",
+                      });
+                      refetch();
+                    } catch (e) {
+                      notification.warning({
+                        message: "Failed",
+                        description: (e as any).msg,
+                      });
+                    }
+                  },
+                  onCancel() {
+                    console.log("Cancel");
+                  },
+                });
+              }}
+            >
+              Delete
+            </Button>
+          </div>
+        );
+      },
     },
   ];
   const handleTableChange = (pagination: any) => {
@@ -291,12 +351,26 @@ const ExpressList = () => {
   return (
     <div>
       <div className="flex mb-4 justify-between">
-        <div className="w-1/5">
-          <Input
-            placeholder="Search for question"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div>
+          <div className="w-1/2 inline-block mr-3">
+            <Input
+              placeholder="Search for question"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          {[
+            { key: "all", title: "All" },
+            { key: "unapproved", title: "Unapproved" },
+          ].map(({ key, title }) => (
+            <Tag.CheckableTag
+              key={key}
+              checked={key == category}
+              onChange={(checked) => setCategory(key)}
+            >
+              {title}
+            </Tag.CheckableTag>
+          ))}
         </div>
         <Button
           type="primary"
@@ -310,10 +384,12 @@ const ExpressList = () => {
       <Table
         columns={columns as any}
         loading={isLoading || dailyLoading}
-        dataSource={(data || []).filter(({ express_question }: any) =>
-          express_question
-            .toLocaleLowerCase()
-            .includes(search.toLocaleLowerCase())
+        dataSource={(data || []).filter(
+          ({ express_question, is_approve, isUserQuestion }: any) =>
+            express_question
+              .toLocaleLowerCase()
+              .includes(search.toLocaleLowerCase()) &&
+            (category == "all" ? true : is_approve == 0 && isUserQuestion)
         )}
         rowKey="PK"
         pagination={{

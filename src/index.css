@@ -24,9 +24,9 @@
     @apply mx-auto max-w-md xl:max-w-xl min-h-screen;
   }
 
-  a {
+  /* a {
     @apply text-gray-100 underline hover:text-gray-100;
-  }
+  } */
 
   button {
     @apply bg-purple text-white px-4 py-2 rounded-3xl text-lg font-magra font-semibold;
@@ -200,4 +200,8 @@
     margin-top: 5px;
     margin-bottom: 5px;
   }
+}
+
+.ant-table-content a {
+  color: #1677ff;
 }
