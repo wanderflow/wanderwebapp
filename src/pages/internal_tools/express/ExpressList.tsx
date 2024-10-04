@@ -10,6 +10,7 @@ import Highlighter from "react-highlight-words";
 
 import {
   approveUserQuestion,
+  createExpress,
   dailyExpressList,
   deleteExpress,
   expressList,
@@ -233,7 +234,15 @@ const ExpressList = () => {
       key: "action",
       render: (
         text: string,
-        { PK, SK, express_question, is_approve, isUserQuestion }: any
+        {
+          PK,
+          SK,
+          express_question,
+          is_approve,
+          isUserQuestion,
+          type,
+          topic,
+        }: any
       ) => {
         if (isUserQuestion) {
           return (
@@ -247,6 +256,11 @@ const ExpressList = () => {
                       express_sk: SK,
                       express_pk: PK,
                       is_approve: 1,
+                    });
+                    await createExpress({
+                      express_question,
+                      type,
+                      topic,
                     });
 
                     notification.success({
