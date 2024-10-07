@@ -12,7 +12,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const mainUsername = "admin";
-    const mainPassword = "password123";
+    const mainPassword = "actearn2024";
 
     if (email === mainUsername && password === mainPassword) {
       login();

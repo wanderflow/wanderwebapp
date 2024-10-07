@@ -21,8 +21,8 @@ const items = [
     label: "Answers",
   },
   {
-    key: "oldPage",
-    label: "Old page",
+    key: "colleges",
+    label: "Colleges",
   },
 ];
 

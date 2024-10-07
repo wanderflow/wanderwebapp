@@ -72,3 +72,9 @@ export const approveUserQuestion = (param) =>
     import.meta.env.VITE_EXPRESS_BACKEND + "/update_user_create_question",
     param
   );
+
+export const getCollegeDisplayList = () =>
+  request.post(import.meta.env.VITE_EXPRESS_BACKEND + "/get_college", {});
+
+export const updateCollege = (data) =>
+  request.post(import.meta.env.VITE_EXPRESS_BACKEND + "/update_college", data);

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Modal, notification, Input, Checkbox } from "antd";
 import { useQuery } from "@tanstack/react-query";
-// import axios from "axios";
 import { Tag } from "antd";
 
 import dayjs from "dayjs";
@@ -400,7 +399,7 @@ const ExpressList = () => {
         loading={isLoading || dailyLoading}
         dataSource={(data || []).filter(
           ({ express_question, is_approve, isUserQuestion }: any) =>
-            express_question
+            (express_question || "")
               .toLocaleLowerCase()
               .includes(search.toLocaleLowerCase()) &&
             (category == "all" ? true : is_approve == 0 && isUserQuestion)

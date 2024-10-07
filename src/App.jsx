@@ -33,6 +33,8 @@ import NewQuestion from "./pages/internal_tools/express/NewExpress";
 import ExpressList from "./pages/internal_tools/express/ExpressList";
 import EditExpress from "./pages/internal_tools/express/EditExpress";
 import DailyExpressList from "./pages/internal_tools/express/DailyExpressList";
+import CollegeList from "./pages/internal_tools/college/CollegeList";
+import EditCollege from "./pages/internal_tools/college/EditCollege";
 
 function OAuthCallback() {
   const { handleRedirectCallback } = useClerk();
@@ -94,10 +96,12 @@ export default function App() {
                 <Route path="/internal" element={<InternalIndex />}>
                   <Route path="expression" element={<QuestionList />} />
                   <Route path="editExpress" element={<EditExpress />} />
+                  <Route path="editCollege" element={<EditCollege />} />
                   <Route path="express" element={<ExpressList />} />
                   <Route path="dailyExpress" element={<DailyExpressList />} />
                   <Route path="newExpress" element={<NewQuestion />} />
-                  <Route path="oldPage" element={<QuestionEdit />} />
+                  {/* <Route path="oldPage" element={<QuestionEdit />} /> */}
+                  <Route path="colleges" element={<CollegeList />} />
                   <Route index element={<Navigate to="/internal/express" />} />
                   <Route
                     path="*"

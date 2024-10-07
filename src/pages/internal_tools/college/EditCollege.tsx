@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Form, Input, Button, notification, Switch } from "antd";
-import { createExpress, editExpress } from "@/api";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, notification, Switch, Select } from "antd";
+import { createExpress, getCollegeList, updateCollege } from "@/api";
 import { useLocation, useNavigate } from "react-router-dom";
-const EditExpress = () => {
+
+const EditCollege = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const { search } = useLocation();
+  const [loading, setLoading] = useState(false);
   const urlParams = new URLSearchParams(search);
   const params = Object.fromEntries(urlParams);
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
-      const res = await editExpress({
+      const res = await updateCollege({
         ...params,
         ...values,
       });
@@ -21,7 +22,7 @@ const EditExpress = () => {
         message: "Success",
         description: "Success",
       });
-      navigate("/internal/express");
+      navigate("/internal/colleges");
     } catch (e) {
       notification.warning({
         message: "Failed",
@@ -34,15 +35,17 @@ const EditExpress = () => {
   return (
     <Form
       form={form}
-      initialValues={params}
+      initialValues={{
+        ...params,
+      }}
       layout="vertical"
       onFinish={handleSubmit}
       className="w-1/3 m-auto mt-20"
     >
       <Form.Item
-        name="new_express"
-        label="Express Question"
-        rules={[{ required: true, message: "Please input the question" }]}
+        name="display_name"
+        label="Display Name"
+        rules={[{ required: true, message: "Please input display name" }]}
       >
         <Input />
       </Form.Item>
@@ -56,4 +59,4 @@ const EditExpress = () => {
   );
 };
 
-export default EditExpress;
+export default EditCollege;
