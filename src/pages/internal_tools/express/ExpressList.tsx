@@ -241,6 +241,7 @@ const ExpressList = () => {
           isUserQuestion,
           type,
           topic,
+          creator,
         }: any
       ) => {
         if (isUserQuestion) {
@@ -260,6 +261,7 @@ const ExpressList = () => {
                       express_question,
                       type,
                       topic,
+                      creator,
                     });
 
                     notification.success({
