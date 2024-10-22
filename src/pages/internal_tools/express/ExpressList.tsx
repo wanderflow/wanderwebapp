@@ -362,6 +362,13 @@ const ExpressList = () => {
     setPage(pagination.current);
     setPageSize(pagination.pageSize);
   };
+  const showData = (data || []).filter(
+    ({ express_question, is_approve, isUserQuestion }: any) =>
+      (express_question || "")
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase()) &&
+      (category == "all" ? true : is_approve == 0 && isUserQuestion)
+  );
 
   return (
     <div>
@@ -399,20 +406,15 @@ const ExpressList = () => {
       <Table
         columns={columns as any}
         loading={isLoading || dailyLoading}
-        dataSource={(data || []).filter(
-          ({ express_question, is_approve, isUserQuestion }: any) =>
-            (express_question || "")
-              .toLocaleLowerCase()
-              .includes(search.toLocaleLowerCase()) &&
-            (category == "all" ? true : is_approve == 0 && isUserQuestion)
-        )}
+        dataSource={showData}
         rowKey="PK"
         pagination={{
           current: page,
           pageSize: page_size,
-          // total: data?.length, // Total number of records (from API)
+          total: showData?.length, // Total number of records (from API)
           showSizeChanger: true,
           pageSizeOptions: ["10", "20", "50", "1000"],
+          showTotal: (total) => `Total: ${total}`,
         }}
         onChange={handleTableChange}
       />

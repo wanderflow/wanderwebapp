@@ -186,6 +186,7 @@ const ExpressionTable = () => {
           total: data?.total_items || 0, // Total number of records (from API)
           showSizeChanger: true,
           pageSizeOptions: ["10", "20", "50"],
+          showTotal: (total) => `Total: ${total}`,
         }}
         onChange={handleTableChange}
       />

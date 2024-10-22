@@ -170,9 +170,10 @@ const ExpressList = () => {
         pagination={{
           current: page,
           pageSize: page_size,
-          // total: data?.length, // Total number of records (from API)
+          total: data?.length || 0, // Total number of records (from API)
           showSizeChanger: true,
           pageSizeOptions: ["10", "20", "50", "1000"],
+          showTotal: (total) => `Total: ${total}`,
         }}
         onChange={handleTableChange}
       />

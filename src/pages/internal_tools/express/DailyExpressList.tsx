@@ -155,9 +155,10 @@ const _DailyExpressList = ({ fetchData, onRemove, sourceData }: any) => {
         pagination={{
           current: page,
           pageSize: page_size,
-          total: dataSource?.length, // Total number of records (from API)
+          total: dataSource?.length || [], // Total number of records (from API)
           showSizeChanger: true,
           pageSizeOptions: ["10", "20", "50", "1000"],
+          showTotal: (total) => `Total: ${total}`,
         }}
         onChange={handleTableChange}
       />
