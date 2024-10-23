@@ -40,7 +40,7 @@ import {
   updateCollegeDailyList,
   updateDailyList,
 } from "@/api";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { timeFormat } from "@/utils";
 
 const _DailyExpressList = ({ fetchData, onRemove, sourceData }: any) => {
@@ -72,6 +72,12 @@ const _DailyExpressList = ({ fetchData, onRemove, sourceData }: any) => {
       title: "Question",
       dataIndex: "express_question",
       key: "express_question",
+      render: (text: string, { PK }: any) => {
+        const link = `/internal/expression?express_pk=${encodeURIComponent(
+          PK
+        )}`;
+        return <Link to={link}>{text}</Link>;
+      },
     },
     {
       title: "Type",

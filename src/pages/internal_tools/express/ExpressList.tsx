@@ -121,7 +121,6 @@ const ExpressList = () => {
       dataIndex: "express_question",
       key: "express_question",
       render: (text: string, { PK }: any) => {
-        console.log(PK);
         const link = `/internal/expression?express_pk=${encodeURIComponent(
           PK
         )}`;
