@@ -95,7 +95,7 @@ const UserList = () => {
       <div className="flex mb-4 justify-between">
         <div className="w-1/5">
           <Input
-            placeholder="At least 3 charters to query"
+            placeholder="Enter at least 3 characters to query"
             value={search_word}
             onChange={(e) => {
               setSearchword(e.target.value);
