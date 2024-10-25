@@ -78,3 +78,16 @@ export const getCollegeDisplayList = () =>
 
 export const updateCollege = (data) =>
   request.post(import.meta.env.VITE_EXPRESS_BACKEND + "/update_college", data);
+export const getUser = (params) =>
+  request.get(
+    "https://us-central1-wander-social-main.cloudfunctions.net/get_clerk_users",
+    {
+      params,
+    }
+  );
+
+export const getUserExpressions = (params) =>
+  request.post(
+    import.meta.env.VITE_EXPRESS_BACKEND + "/get_user_express_question_list",
+    params
+  );

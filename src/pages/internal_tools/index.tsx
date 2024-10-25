@@ -24,6 +24,10 @@ const items = [
     key: "colleges",
     label: "Colleges",
   },
+  {
+    key: "users",
+    label: "Users",
+  },
 ];
 
 const InternalIndex: React.FC = () => {

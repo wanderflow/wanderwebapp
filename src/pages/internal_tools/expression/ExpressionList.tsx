@@ -41,17 +41,7 @@ const ExpressionTable = () => {
       { replace: true }
     );
   }, [page, page_size, search_word]);
-  // useEffect(() => {
-  //   // Update URL search params when page or pageSize changes
-  //   setSearchParams(
-  //     {
-  //       page: `${page}`,
-  //       page_size: `${page_size}`,
-  //       search_word,
-  //     },
-  //     { replace: true }
-  //   );
-  // }, [page, page_size, search_word]);
+
   useEffect(() => {
     if (error) {
       notification.error({

@@ -32,7 +32,9 @@ export const download1Image = download1;
 export const download2Image = download2;
 export const eyeImage = eye;
 export const eyeImage2 = eyes;
-// export const internalBg;
 export const timeFormat = (time) => {
   return dayjs(time).format("YYYY-MM-DD HH:mm:ss");
+};
+export const timeFormatDate = (time) => {
+  return dayjs(time).format("YYYY-MM-DD");
 };
