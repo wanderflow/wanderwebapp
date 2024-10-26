@@ -140,6 +140,13 @@ const ExpressList = () => {
       },
     },
     {
+      title: "Answer count",
+      dataIndex: "count",
+      sorter: (a: any, b: any) => {
+        return (a.count || 0) > (b.count || 0) ? 1 : -1;
+      },
+    },
+    {
       title: "Asked by user",
       dataIndex: "isUserQuestion",
       key: "isUserQuestion",
@@ -212,6 +219,7 @@ const ExpressList = () => {
       },
       render: (text: string) => timeFormat(parseInt(text) * 1000),
     },
+
     {
       title: "Creator",
       dataIndex: "creator",
