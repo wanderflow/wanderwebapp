@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Input, Table } from "antd";
+import { Input, message, Table } from "antd";
 import { useQuery } from "@tanstack/react-query";
 
 import { getUser } from "@/api";
@@ -17,8 +17,8 @@ const UserList = () => {
   const initialPageSize = parseInt(searchParams.get("page_size") || "10");
   const initialSearchWord = searchParams.get("search_word") || "";
   const [search_word, setSearchword] = useState(initialSearchWord);
-  const navigate = useNavigate();
   const [page, setPage] = useState(initialPage);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [page_size, setPageSize] = useState(initialPageSize);
   const {
@@ -68,6 +68,22 @@ const UserList = () => {
       ),
     },
     {
+      title: "ID",
+      dataIndex: "id",
+      render: (id: string) => (
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            messageApi.open({
+              type: "success",
+              content: "ID has copied",
+            });
+            navigator.clipboard.writeText(`user#${id}`);
+          }}
+        >{`user#${id}`}</div>
+      ),
+    },
+    {
       title: "Gender",
       key: "gender",
       render: (_: any, { unsafe_metadata }: any) => unsafe_metadata?.gender,
@@ -92,6 +108,7 @@ const UserList = () => {
 
   return (
     <div>
+      {contextHolder}
       <div className="flex mb-4 justify-between">
         <div className="w-1/5">
           <Input
