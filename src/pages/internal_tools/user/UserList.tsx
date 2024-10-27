@@ -28,7 +28,14 @@ const UserList = () => {
     refetch,
   } = useQuery({
     queryKey: ["users", { page, page_size, search_word }],
-    queryFn: () => fetchData({ page, page_size, query: search_word }),
+    queryFn: () =>
+      fetchData({
+        page,
+        page_size,
+        query: search_word.startsWith("user#")
+          ? search_word.slice(5)
+          : search_word,
+      }),
     enabled: search_word.length == 0 || search_word.length > 2,
   });
   useEffect(() => {
@@ -72,7 +79,7 @@ const UserList = () => {
       dataIndex: "id",
       render: (id: string) => (
         <div
-          className="cursor-pointer"
+          className="cursor-pointer text-xs"
           onClick={() => {
             messageApi.open({
               type: "success",
@@ -110,7 +117,7 @@ const UserList = () => {
     <div>
       {contextHolder}
       <div className="flex mb-4 justify-between">
-        <div className="w-1/5">
+        <div className="w-1/4">
           <Input
             placeholder="Enter at least 3 characters to query"
             value={search_word}
