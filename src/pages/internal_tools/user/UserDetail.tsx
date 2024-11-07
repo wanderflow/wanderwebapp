@@ -1,4 +1,4 @@
-import { deleteExpress, getUserExpressions } from "@/api";
+import { deleteExpression, getUserExpressions } from "@/api";
 import { ChatHistory } from "@/types";
 import { timeFormat } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -130,7 +130,7 @@ function UserDetail() {
           selectedRowKeys.map(async (key: any) => {
             const [express_pk, express_sk] = key.split(":");
             try {
-              await deleteExpress({
+              await deleteExpression({
                 express_sk,
                 express_pk,
               });
@@ -164,19 +164,19 @@ function UserDetail() {
     <div>
       <div className="flex mb-4 justify-between">
         <div />
-        <Button
+        {/* <Button
           danger
           type="primary"
           onClick={batchDelete}
           disabled={selectedRowKeys.length == 0}
         >
           Delete
-        </Button>
+        </Button> */}
       </div>
       <Table
         columns={columns as any}
         dataSource={data || []}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         loading={isLoading}
         rowKey={({ PK, SK }) => `${PK}:${SK}`}
         pagination={{
