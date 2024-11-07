@@ -128,11 +128,11 @@ function UserDetail() {
       onOk: async () => {
         const res = await Promise.all(
           selectedRowKeys.map(async (key: any) => {
-            const [express_pk, express_sk] = key.split(":");
+            const [expression_pk, expression_sk] = key.split(":");
             try {
               await deleteExpression({
-                express_sk,
-                express_pk,
+                expression_pk,
+                expression_sk,
               });
               return true;
             } catch (e) {
@@ -164,21 +164,23 @@ function UserDetail() {
     <div>
       <div className="flex mb-4 justify-between">
         <div />
-        {/* <Button
+        <Button
           danger
           type="primary"
           onClick={batchDelete}
           disabled={selectedRowKeys.length == 0}
         >
           Delete
-        </Button> */}
+        </Button>
       </div>
       <Table
         columns={columns as any}
         dataSource={data || []}
-        // rowSelection={rowSelection}
+        rowSelection={rowSelection}
         loading={isLoading}
-        rowKey={({ PK, SK }) => `${PK}:${SK}`}
+        rowKey={({ expression_pk, expression_sk }) =>
+          `${expression_pk}:${expression_sk}`
+        }
         pagination={{
           current: page,
           pageSize: page_size,
