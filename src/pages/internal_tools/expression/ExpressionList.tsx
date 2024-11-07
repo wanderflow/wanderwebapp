@@ -5,11 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { deleteExpression, expressionsExpress } from "@/api";
 import { useSearchParams } from "react-router-dom";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useAuth } from "@/pages/AuthContext";
 
 const fetchData: any = async (params: any) => {
-  console.log(params);
   const response = await expressionsExpress(params);
-  console.log(response);
   return response;
 };
 
@@ -26,6 +25,7 @@ const ExpressionTable = () => {
   const [page_size, setPageSize] = useState(initialPageSize);
   const [search_word, setSearchword] = useState(initialSearchWord);
   const [express_pk, setExpressPk] = useState(initExpressPK);
+  const { readonly } = useAuth();
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["expressions", { page, page_size, search_word, express_pk }],
     queryFn: () => fetchData({ page, page_size, search_word, express_pk }),
@@ -166,7 +166,7 @@ const ExpressionTable = () => {
         </div>
       </div>
       <Table
-        columns={columns}
+        columns={readonly ? columns.slice(0, -1) : (columns as any)}
         loading={isLoading}
         dataSource={data?.data || []}
         // rowKey="PK_x"

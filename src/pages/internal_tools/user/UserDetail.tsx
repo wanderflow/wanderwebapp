@@ -10,6 +10,7 @@ import {
   ExclamationCircleFilled,
 } from "@ant-design/icons";
 import { useParams, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/pages/AuthContext";
 
 const ChatHistoryRender = ({
   chatHistoires,
@@ -66,6 +67,7 @@ function UserDetail() {
     onChange: onSelectChange,
   };
   const { confirm } = Modal;
+  const { readonly } = useAuth();
   const [page_size, setPageSize] = useState(initialPageSize);
   const {
     data = [],
@@ -164,19 +166,21 @@ function UserDetail() {
     <div>
       <div className="flex mb-4 justify-between">
         <div />
-        <Button
-          danger
-          type="primary"
-          onClick={batchDelete}
-          disabled={selectedRowKeys.length == 0}
-        >
-          Delete
-        </Button>
+        {!readonly && (
+          <Button
+            danger
+            type="primary"
+            onClick={batchDelete}
+            disabled={selectedRowKeys.length == 0}
+          >
+            Delete
+          </Button>
+        )}
       </div>
       <Table
         columns={columns as any}
         dataSource={data || []}
-        rowSelection={rowSelection}
+        rowSelection={readonly ? undefined : rowSelection}
         loading={isLoading}
         rowKey={({ expression_pk, expression_sk }) =>
           `${expression_pk}:${expression_sk}`

@@ -1,9 +1,10 @@
-import React from "react";
-import { Layout, Menu, theme } from "antd";
+import React, { useEffect } from "react";
+import { Layout, Menu, Result, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import logo from "@/assets/images/logo.png";
-import PrivateRoute from "./PrivateRoute";
+import { SignedIn, UserButton } from "@clerk/clerk-react";
+import { useAuth } from "../AuthContext";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -36,9 +37,15 @@ const InternalIndex: React.FC = () => {
   } = theme.useToken();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { login, isAuthenticated, role } = useAuth();
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated]);
   return (
-    <PrivateRoute>
+    <SignedIn>
       <Layout className="h-screen">
         <Sider
           breakpoint="lg"
@@ -65,7 +72,14 @@ const InternalIndex: React.FC = () => {
           />
         </Sider>
         <Layout>
-          {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
+          <Header
+            style={{ background: colorBgContainer }}
+            className="flex justify-end"
+          >
+            <div>
+              <UserButton showName />
+            </div>
+          </Header>
           <Content
             style={{
               margin: "24px 16px 0",
@@ -76,14 +90,21 @@ const InternalIndex: React.FC = () => {
             }}
             className="overflow-y-scroll"
           >
-            <Outlet />
+            {role == "user" ? (
+              <Result
+                status="warning"
+                title="Your account doesn't have permissions, please contact admin"
+              />
+            ) : (
+              <Outlet />
+            )}
           </Content>
           <Footer style={{ textAlign: "center" }}>
             Wander Social ©{new Date().getFullYear()}
           </Footer>
         </Layout>
       </Layout>
-    </PrivateRoute>
+    </SignedIn>
   );
 };
 

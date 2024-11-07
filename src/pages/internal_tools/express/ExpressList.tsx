@@ -24,6 +24,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { timeFormat } from "@/utils";
+import { useAuth } from "@/pages/AuthContext";
 const fetchData: any = async (params: any) => {
   const response: any = await expressList(params);
   return response.map((m: any) => ({
@@ -47,6 +48,7 @@ const ExpressList = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(initialPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { readonly } = useAuth();
   const [category, setCategory] = useState(
     // searchParams.get("category") == "unapproved" ? "" : "all"
     initCat == "unapproved" ? initCat : "all"
@@ -401,17 +403,19 @@ const ExpressList = () => {
             </Tag.CheckableTag>
           ))}
         </div>
-        <Button
-          type="primary"
-          onClick={() => {
-            navigate("/internal/newExpress");
-          }}
-        >
-          Create new Question
-        </Button>
+        {!readonly && (
+          <Button
+            type="primary"
+            onClick={() => {
+              navigate("/internal/newExpress");
+            }}
+          >
+            Create new Question
+          </Button>
+        )}
       </div>
       <Table
-        columns={columns as any}
+        columns={readonly ? columns.slice(0, -1) : (columns as any)}
         loading={isLoading || dailyLoading}
         dataSource={showData}
         rowKey="PK"

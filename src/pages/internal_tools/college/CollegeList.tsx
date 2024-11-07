@@ -26,6 +26,7 @@ import {
 } from "react-router-dom";
 import { timeFormat } from "@/utils";
 import { title } from "process";
+import { useAuth } from "@/pages/AuthContext";
 const fetchData: any = async () => {
   const response: any = await getCollegeDisplayList();
   return response.map((m: any) => ({
@@ -53,6 +54,7 @@ const ExpressList = () => {
     // searchParams.get("category") == "unapproved" ? "" : "all"
     initCat == "unapproved" ? initCat : "all"
   );
+  const { readonly } = useAuth();
   const [currentModalObj, setCurrentModalObj] = useState<{
     id: string;
     question: string;
@@ -163,7 +165,7 @@ const ExpressList = () => {
   return (
     <div>
       <Table
-        columns={columns as any}
+        columns={readonly ? columns.slice(0, -1) : columns}
         loading={isLoading}
         dataSource={data || []}
         rowKey="PK"

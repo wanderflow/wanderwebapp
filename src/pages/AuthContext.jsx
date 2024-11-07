@@ -1,20 +1,27 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
+import { useUser } from "@clerk/clerk-react";
+// import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("login") === "true"
-  );
+  const { isSignedIn, user } = useUser();
 
-  const login = () => {
-    localStorage.setItem("login", "true");
-    setIsAuthenticated(true);
-  };
-  const logout = () => setIsAuthenticated(false);
+  const role = useMemo(() => {
+    try {
+      const internalOrg = user.organizationMemberships.find(
+        (org) => org.organization.name === "InternalTool"
+      );
+      return internalOrg.role === "admin" ? "admin" : "readonly";
+    } catch (e) {
+      return "user";
+    }
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated: isSignedIn, role, readonly: role != "admin" }}
+    >
       {children}
     </AuthContext.Provider>
   );

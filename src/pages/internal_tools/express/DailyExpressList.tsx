@@ -42,19 +42,19 @@ import {
 } from "@/api";
 import { Link, useSearchParams } from "react-router-dom";
 import { timeFormat } from "@/utils";
+import { useAuth } from "@/pages/AuthContext";
 
 const _DailyExpressList = ({ fetchData, onRemove, sourceData }: any) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = parseInt(searchParams.get("page") || "1");
   const initialPageSize = parseInt(searchParams.get("page_size") || "10");
-
-  // const navigate = useNavigate();
   const [page, setPage] = useState(initialPage);
   const [page_size, setPageSize] = useState(initialPageSize);
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["dailyExpress"],
     queryFn: () => fetchData({}),
   });
+  const { readonly } = useAuth();
   useEffect(() => {
     setSearchParams(
       (searchParams) => {
@@ -154,7 +154,7 @@ const _DailyExpressList = ({ fetchData, onRemove, sourceData }: any) => {
   return (
     <div>
       <Table
-        columns={columns}
+        columns={readonly ? columns.slice(0, -1) : columns}
         loading={isLoading}
         dataSource={dataSource || []}
         rowKey="PK"
