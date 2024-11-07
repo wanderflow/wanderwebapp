@@ -1,10 +1,14 @@
-import { getUserExpressions } from "@/api";
+import { deleteExpress, getUserExpressions } from "@/api";
 import { ChatHistory } from "@/types";
 import { timeFormat } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Table, Timeline } from "antd";
+import { Button, Modal, notification, Table, TableProps, Timeline } from "antd";
 import { useEffect, useState } from "react";
-import { UserOutlined, MessageOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  MessageOutlined,
+  ExclamationCircleFilled,
+} from "@ant-design/icons";
 import { useParams, useSearchParams } from "react-router-dom";
 
 const ChatHistoryRender = ({
@@ -50,7 +54,18 @@ function UserDetail() {
   const initialPage = parseInt(searchParams.get("page") || "1");
   const initialPageSize = parseInt(searchParams.get("page_size") || "10");
   const [page, setPage] = useState(initialPage);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+  const { confirm } = Modal;
   const [page_size, setPageSize] = useState(initialPageSize);
   const {
     data = [],
@@ -104,15 +119,66 @@ function UserDetail() {
     setPage(pagination.current);
     setPageSize(pagination.pageSize);
   };
+  const batchDelete = () => {
+    // console.log(selectedRowKeys);
+    confirm({
+      title: `Do you want to delete these answers?`,
+      icon: <ExclamationCircleFilled />,
+      content: `Total selecte:  ${selectedRowKeys.length}`,
+      onOk: async () => {
+        const res = await Promise.all(
+          selectedRowKeys.map(async (key: any) => {
+            const [express_pk, express_sk] = key.split(":");
+            try {
+              await deleteExpress({
+                express_sk,
+                express_pk,
+              });
+              return true;
+            } catch (e) {
+              return false;
+            }
+          })
+        );
+        let successCount = res.reduce((a, c) => a + (c ? 1 : 0), 0);
+        if (successCount === 0) {
+          notification.warning({
+            message: "Failed",
+            description: "Failed",
+          });
+        } else {
+          notification.success({
+            message: "Success",
+            description: `Succeed: ${successCount}; \nFailed: ${
+              res.length - successCount
+            }`,
+          });
+        }
+        setSelectedRowKeys([]);
+        refetch();
+      },
+    });
+  };
 
   return (
     <div>
-      <div className="flex mb-4 justify-between"></div>
+      <div className="flex mb-4 justify-between">
+        <div />
+        <Button
+          danger
+          type="primary"
+          onClick={batchDelete}
+          disabled={selectedRowKeys.length == 0}
+        >
+          Delete
+        </Button>
+      </div>
       <Table
         columns={columns as any}
         dataSource={data || []}
+        rowSelection={rowSelection}
         loading={isLoading}
-        rowKey="SK"
+        rowKey={({ PK, SK }) => `${PK}:${SK}`}
         pagination={{
           current: page,
           pageSize: page_size,
