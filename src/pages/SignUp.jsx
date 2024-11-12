@@ -55,7 +55,7 @@ const SignUp = () => {
       });
       console.log("Invite user relation created:", data);
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      
+
       navigate(`/confirm?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.log("Error:", err);
@@ -152,7 +152,7 @@ const SignUp = () => {
             <h5 className="terms my-6">
               By continuing, I agree to the{" "}
               <a
-                href="https://wander.one/eula"
+                href="https://dev.wander.one/eula"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -160,7 +160,7 @@ const SignUp = () => {
               </a>{" "}
               and{" "}
               <a
-                href="https://wander.one/privacy_policy"
+                href="https://dev.wander.one/privacy_policy"
                 target="_blank"
                 rel="noopener noreferrer"
               >
